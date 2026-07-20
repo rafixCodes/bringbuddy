@@ -62,7 +62,7 @@ const registerUser = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Register Error:', error);
+    console.error(error);
 
     return res.status(500).json({
       success: false,
@@ -94,10 +94,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      password,
-      user.password
-    );
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatched) {
       return res.status(401).json({
@@ -122,7 +119,24 @@ const loginUser = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Login Error:', error);
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
+// Get Logged-in User Profile
+const getUserProfile = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      user: req.user
+    });
+  } catch (error) {
+    console.error(error);
 
     return res.status(500).json({
       success: false,
@@ -133,5 +147,6 @@ const loginUser = async (req, res) => {
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getUserProfile
 };
