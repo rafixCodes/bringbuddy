@@ -5,7 +5,7 @@ const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
-
+const restrictedItemRoutes = require("./routes/restrictedItemRoutes");
 dotenv.config();
 connectDB();
 
@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
-
+app.use("/api/restricted-items", restrictedItemRoutes);
 // Server
 const PORT = process.env.PORT || 5001;
 

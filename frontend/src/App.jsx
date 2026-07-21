@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Notifications from "./pages/Notifications";
+import RestrictedItems from "./pages/RestrictedItems";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/notifications" element={<Notifications />} />
+      <Route path="/restricted-items" element={<RestrictedItems />} />
     </Routes>
   );
 }

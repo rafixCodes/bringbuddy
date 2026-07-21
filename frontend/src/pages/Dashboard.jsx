@@ -24,15 +24,33 @@ function Dashboard() {
     <div>
       <h1>Dashboard</h1>
 
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Role:</strong> {user.role}</p>
-      <p><strong>Phone:</strong> {user.phone}</p>
+      <p>
+        <strong>Name:</strong> {user.name}
+      </p>
+
+      <p>
+        <strong>Email:</strong> {user.email}
+      </p>
+
+      <p>
+        <strong>Role:</strong> {user.role}
+      </p>
+
+      <p>
+        <strong>Phone:</strong> {user.phone}
+      </p>
 
       <br />
 
       <Link to="/notifications">
         <button>View Notifications</button>
+      </Link>
+
+      <br />
+      <br />
+
+      <Link to="/restricted-items">
+        <button>Restricted Items</button>
       </Link>
     </div>
   );
