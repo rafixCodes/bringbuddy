@@ -13,11 +13,14 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+// Routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const restrictedItemRoutes = require("./routes/restrictedItemRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/restricted-items", restrictedItemRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
