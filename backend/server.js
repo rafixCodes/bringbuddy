@@ -1,3 +1,4 @@
+const reviewRoutes = require("./routes/reviewRoutes");
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
