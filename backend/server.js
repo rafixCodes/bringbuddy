@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const profileRoutes = require('./routes/profileRoutes');
 
 dotenv.config();
 connectDB();
@@ -9,6 +10,7 @@ connectDB();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/api/profile', profileRoutes);
 
 app.get('/', (req, res) => {
   res.send('BringBuddy API is running');
