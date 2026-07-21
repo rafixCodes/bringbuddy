@@ -1,31 +1,28 @@
-const mongoose = require('mongoose');
 const User = require('../models/User');
 
 // ===============================
-// Get User Profile
+// Get Logged-in User Profile
 // ===============================
 const getUserProfile = async (req, res) => {
   try {
-    // Check if the provided user ID is valid
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({
-        message: 'Invalid user ID'
-      });
-    }
-
-    // Find user and exclude password
-    const user = await User.findById(req.params.id).select('-password');
+    // User ID comes from JWT authentication middleware
+    const user = await User.findById(req.user._id).select('-password');
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: 'User not found'
       });
     }
 
-    res.status(200).json(user);
+    res.status(200).json({
+      success: true,
+      user
+    });
 
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: 'Server error',
       error: error.message
     });
@@ -34,27 +31,20 @@ const getUserProfile = async (req, res) => {
 
 
 // ===============================
-// Update User Profile
+// Update Logged-in User Profile
 // ===============================
 const updateUserProfile = async (req, res) => {
   try {
-    // Check if the provided user ID is valid
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({
-        message: 'Invalid user ID'
-      });
-    }
-
-    // Find user
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: 'User not found'
       });
     }
 
-    // Update allowed profile fields
+    // Update only allowed profile fields
     if (req.body.name !== undefined) {
       user.name = req.body.name;
     }
@@ -67,20 +57,21 @@ const updateUserProfile = async (req, res) => {
       user.profilePhoto = req.body.profilePhoto;
     }
 
-    // Save updated user
     const updatedUser = await user.save();
 
-    // Remove password before sending response
+    // Convert to normal object and remove password
     const userResponse = updatedUser.toObject();
     delete userResponse.password;
 
     res.status(200).json({
+      success: true,
       message: 'Profile updated successfully',
       user: userResponse
     });
 
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: 'Server error',
       error: error.message
     });
@@ -88,7 +79,6 @@ const updateUserProfile = async (req, res) => {
 };
 
 
-// Export functions
 module.exports = {
   getUserProfile,
   updateUserProfile

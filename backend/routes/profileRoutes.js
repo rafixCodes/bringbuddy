@@ -6,10 +6,12 @@ const {
   updateUserProfile
 } = require('../controllers/profileController');
 
-// Get user profile
-router.get('/:id', getUserProfile);
+const { protect } = require('../middleware/authMiddleware');
 
-// Update user profile
-router.put('/:id', updateUserProfile);
+// Get logged-in user's profile
+router.get('/', protect, getUserProfile);
+
+// Update logged-in user's profile
+router.put('/', protect, updateUserProfile);
 
 module.exports = router;
