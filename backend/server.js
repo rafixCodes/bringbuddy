@@ -3,8 +3,9 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-const profileRoutes = require('./routes/profileRoutes');
 const authRoutes = require('./routes/authRoutes');
+const profileRoutes = require('./routes/profileRoutes');
+const tripRoutes = require('./routes/tripRoutes');
 
 dotenv.config();
 connectDB();
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/trips', tripRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
