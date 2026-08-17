@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { getProfile } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+import { getProfile, logoutUser } from "../services/authService";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -11,11 +13,17 @@ function Dashboard() {
         setUser(data.user);
       } catch (error) {
         console.error(error);
+        navigate("/login");
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [navigate]);
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/login");
+  };
 
   if (!user) {
     return <h2>Loading...</h2>;
@@ -40,6 +48,8 @@ function Dashboard() {
       <p>
         <strong>Phone:</strong> {user.phone}
       </p>
+
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
