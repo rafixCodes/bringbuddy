@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken');
 const SALT_ROUNDS = 10;
 
 // Generate JWT Token
-const generateToken = (id, role) => {
+const generateToken = (id, accountType) => {
   return jwt.sign(
-    { id, role },
+    { id, accountType },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
@@ -16,9 +16,9 @@ const generateToken = (id, role) => {
 // Register User
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, phone, role } = req.body;
+    const { name, email, password, phone } = req.body;
 
-    if (!name || !email || !password || !phone || !role) {
+    if (!name || !email || !password || !phone) {
       return res.status(400).json({
         success: false,
         message: 'Please fill all required fields'
@@ -42,11 +42,11 @@ const registerUser = async (req, res) => {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password: hashedPassword,
-      phone: phone.trim(),
-      role
+      phone: phone.trim()
+      // accountType defaults to 'user', currentMode defaults to null
     });
 
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id, user.accountType);
 
     return res.status(201).json({
       success: true,
@@ -57,7 +57,9 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role
+        accountType: user.accountType,
+        currentMode: user.currentMode,
+        hasCompletedOnboarding: user.hasCompletedOnboarding
       }
     });
 
@@ -103,7 +105,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id, user.accountType);
 
     return res.status(200).json({
       success: true,
@@ -114,7 +116,9 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role
+        accountType: user.accountType,
+        currentMode: user.currentMode,
+        hasCompletedOnboarding: user.hasCompletedOnboarding
       }
     });
 
@@ -145,8 +149,58 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+// Complete Onboarding — sets the user's chosen mode (sender/traveler) after signup
+const completeOnboarding = async (req, res) => {
+  try {
+    const { mode } = req.body;
+
+    if (!mode || !['sender', 'traveler'].includes(mode)) {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid mode (sender or traveler) is required'
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    user.currentMode = mode;
+    user.hasCompletedOnboarding = true;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Onboarding completed',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        accountType: user.accountType,
+        currentMode: user.currentMode,
+        hasCompletedOnboarding: user.hasCompletedOnboarding
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error'
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile
+  getUserProfile,
+  completeOnboarding
 };

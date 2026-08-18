@@ -5,7 +5,16 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: { type: String, required: true },
-  role: { type: String, enum: ['sender', 'traveler', 'admin'], required: true },
+
+  // Fixed at creation, never toggled. 'admin' accounts are created manually, never via signup.
+  accountType: { type: String, enum: ['user', 'admin'], default: 'user' },
+
+  // The user's currently active mode. Null until they complete onboarding (ModeSelection).
+  // Switchable any time afterward — this is what the dashboard toggle changes.
+  currentMode: { type: String, enum: ['sender', 'traveler', null], default: null },
+
+  hasCompletedOnboarding: { type: Boolean, default: false },
+
   profilePhoto: { type: String, default: '' },
 
   travelerInfo: {
