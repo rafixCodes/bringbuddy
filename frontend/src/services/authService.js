@@ -15,6 +15,11 @@ export const getProfile = async () => {
   return response.data;
 };
 
+export const completeOnboarding = async (mode) => {
+  const response = await api.post("/auth/onboarding", { mode });
+  return response.data;
+};
+
 export const logoutUser = () => {
   localStorage.removeItem("token");
 };
