@@ -5,6 +5,7 @@ import { Button } from '../ui'
 import { AuthLayout } from './AuthLayout'
 import { FormField, PasswordField } from './FormField'
 import { useToast } from '../../lib/toast'
+import { useAuth } from '../../context/AuthContext'
 import { registerUser } from '../../services/authService'
 
 function getPasswordStrength(pw) {
@@ -18,6 +19,7 @@ function getPasswordStrength(pw) {
 export function Register() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { refreshUser } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -58,6 +60,7 @@ export function Register() {
       })
 
       localStorage.setItem('token', data.token)
+      await refreshUser()
       setState('success')
       toast({ tone: 'success', title: 'Account created!', message: 'Welcome to BringBuddy.' })
       navigate('/onboarding')

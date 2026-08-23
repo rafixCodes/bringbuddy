@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui'
 import { Logo } from '../Logo'
 import { useToast } from '../../lib/toast'
+import { useAuth } from '../../context/AuthContext'
 import { completeOnboarding } from '../../services/authService'
 
 const steps = [
@@ -29,15 +30,27 @@ const steps = [
 export function SenderOnboarding() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { refreshUser } = useAuth()
 
-  async function handleSwitchToTraveler() {
+  // This is the real completion point for the sender onboarding flow —
+  // hasCompletedOnboarding becomes true here, not on the mode-picker page.
+  async function handleContinueToDashboard() {
     try {
-      await completeOnboarding('traveler')
-      navigate('/traveler-onboarding')
+      await completeOnboarding('sender')
+      await refreshUser()
+      navigate('/sender-dashboard')
     } catch (error) {
-      const message = error.response?.data?.message || 'Could not switch modes. Please try again.'
+      const message = error.response?.data?.message || 'Could not continue. Please try again.'
       toast({ tone: 'error', title: 'Something went wrong', message })
     }
+  }
+
+  // Just moves to the other intro page — does NOT call completeOnboarding.
+  // Doing so here would mark onboarding complete before the traveler intro
+  // page is even shown, and OnboardingRoute would bounce the user straight
+  // past it to the dashboard.
+  function handleSwitchToTraveler() {
+    navigate('/traveler-onboarding')
   }
 
   return (
@@ -89,7 +102,7 @@ export function SenderOnboarding() {
               size="lg"
               className="flex-1"
               trailingIcon={<ArrowRight size={16} />}
-              onClick={() => navigate('/sender-dashboard')}
+              onClick={handleContinueToDashboard}
             >
               Continue to Sender Dashboard
             </Button>

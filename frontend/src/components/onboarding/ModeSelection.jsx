@@ -3,15 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { Package, Plane, ArrowRight, CheckCircle2, User, Bell, Settings, ShieldCheck } from 'lucide-react'
 import { Button } from '../ui'
 import { Logo } from '../Logo'
-import { useToast } from '../../lib/toast'
-import { getProfile, completeOnboarding } from '../../services/authService'
+import { getProfile } from '../../services/authService'
 
+// NOTE: this page only picks a mode and navigates on — it does NOT call
+// completeOnboarding(). That call happens at the end of SenderOnboarding.jsx /
+// TravelerOnboarding.jsx instead, when the user actually finishes onboarding.
+// Calling it here would set hasCompletedOnboarding=true a step too early,
+// causing OnboardingRoute to bounce the user straight past the intro page
+// on the next navigation.
 export function ModeSelection() {
   const navigate = useNavigate()
-  const { toast } = useToast()
   const [selected, setSelected] = useState(null)
   const [user, setUser] = useState(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     async function fetchUser() {
@@ -26,18 +29,9 @@ export function ModeSelection() {
     fetchUser()
   }, [navigate])
 
-  async function handleContinue() {
-    if (!selected || isSubmitting) return
-    setIsSubmitting(true)
-
-    try {
-      await completeOnboarding(selected)
-      navigate(selected === 'sender' ? '/sender-onboarding' : '/traveler-onboarding')
-    } catch (error) {
-      const message = error.response?.data?.message || 'Something went wrong. Please try again.'
-      toast({ tone: 'error', title: 'Could not save your choice', message })
-      setIsSubmitting(false)
-    }
+  function handleContinue() {
+    if (!selected) return
+    navigate(selected === 'sender' ? '/sender-onboarding' : '/traveler-onboarding')
   }
 
   return (
@@ -139,11 +133,11 @@ export function ModeSelection() {
             variant="primary"
             size="lg"
             className="w-full mb-10"
-            disabled={!selected || isSubmitting}
+            disabled={!selected}
             onClick={handleContinue}
             trailingIcon={<ArrowRight size={16} />}
           >
-            {isSubmitting ? 'Saving…' : 'Continue'}
+            Continue
           </Button>
 
           <div className="rounded-[16px] border border-border bg-white px-6 py-6">

@@ -5,11 +5,13 @@ import { Button } from '../ui'
 import { AuthLayout } from './AuthLayout'
 import { FormField, PasswordField } from './FormField'
 import { useToast } from '../../lib/toast'
+import { useAuth } from '../../context/AuthContext'
 import { loginUser } from '../../services/authService'
 
 export function Login() {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { refreshUser } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [state, setState] = useState('idle')
@@ -38,6 +40,7 @@ export function Login() {
     try {
       const data = await loginUser({ email, password })
       localStorage.setItem('token', data.token)
+      await refreshUser()
       setState('success')
       toast({ tone: 'success', title: 'Login successful', message: 'Welcome back to BringBuddy.' })
 

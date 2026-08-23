@@ -2,8 +2,6 @@ import { ShieldCheck, Globe, Wallet, ArrowRight, Package } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui'
 import { Logo } from '../Logo'
-import { useToast } from '../../lib/toast'
-import { completeOnboarding } from '../../services/authService'
 
 const steps = [
   {
@@ -31,16 +29,22 @@ const steps = [
 
 export function TravelerOnboarding() {
   const navigate = useNavigate()
-  const { toast } = useToast()
 
-  async function handleContinueAsSender() {
-    try {
-      await completeOnboarding('sender')
-      navigate('/sender-onboarding')
-    } catch (error) {
-      const message = error.response?.data?.message || 'Could not switch modes. Please try again.'
-      toast({ tone: 'error', title: 'Something went wrong', message })
-    }
+  // NOTE: "Start Verification" below points to /verification-intro, which
+  // isn't wired yet (Feature 1 — Traveler Verification — hasn't been built).
+  // That means there's currently no UI path that marks a traveler's
+  // onboarding complete on this page; the only way to reach the traveler
+  // dashboard right now is via AuthNavbar's mode switch, which already
+  // calls completeOnboarding + refreshUser correctly. Wire "Start
+  // Verification" for real once Feature 1 exists — don't fake-complete
+  // onboarding here in the meantime, that would skip verification entirely.
+
+  // Just moves to the other intro page — does NOT call completeOnboarding.
+  // Doing so here would mark onboarding complete before the sender intro
+  // page is even shown, and OnboardingRoute would bounce the user straight
+  // past it to the dashboard.
+  function handleContinueAsSender() {
+    navigate('/sender-onboarding')
   }
 
   return (
