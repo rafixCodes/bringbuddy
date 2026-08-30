@@ -1,9 +1,12 @@
-import { Package, Search, ShoppingBag, ArrowRight, Clock, CheckCircle2, Truck, ChevronRight, Star, Shield, Zap } from 'lucide-react'
+import { Package, Search, ShoppingBag, ArrowRight, Clock, CheckCircle2, Truck, ChevronRight, Star, Shield, Zap, Loader2, PackageOpen } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui'
 import { AuthNavbar } from '../AuthNavbar'
 import { useAuth } from '../../context/AuthContext'
 import { TRAVELERS } from '../../data/prototype'
+import { getMyOrders } from '../../services/orderService'
+import { getStatusInfo } from '../../data/orderStatus'
 
 // DUMMY DATA — Order Management (Features 4/5/9) not built on backend yet.
 // Replace with a real API call once orders exist.
@@ -119,12 +122,37 @@ const SENDER_STATUS = {
   cancelled: { label: 'Cancelled', cls: 'bg-danger-light text-danger' },
 }
 
+// Note: the real Order.js status labels/colors used below now live in
+// data/orderStatus.js (shared with OrderHistory.jsx), not duplicated here.
+
 export function SenderDashboard() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const activeOrder = DUMMY_ACTIVE_ORDER // placeholder until Order Management exists
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+
+  // Real orders, fetched from the actual backend (Feature 4/5) — separate
+  // from the dummy ACTIVE_DELIVERIES/DUMMY_ACTIVE_ORDER above, which stand
+  // in for tracking/matching data that doesn't exist yet (Features 8/9).
+  const [myOrders, setMyOrders] = useState([])
+  const [ordersLoading, setOrdersLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchOrders() {
+      try {
+        const data = await getMyOrders()
+        if (!cancelled) setMyOrders(data.orders || [])
+      } catch (error) {
+        console.error(error)
+      } finally {
+        if (!cancelled) setOrdersLoading(false)
+      }
+    }
+    fetchOrders()
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <div className="min-h-screen bg-background">
@@ -143,7 +171,7 @@ export function SenderDashboard() {
             <Button variant="primary" size="lg" leadingIcon={<Search size={16} />} trailingIcon={<ArrowRight size={15} />} onClick={() => navigate('/trip-search')}>
               Find a Trip
             </Button>
-            <Button variant="secondary" size="lg" leadingIcon={<Package size={16} />} onClick={() => navigate('/order-new')}>
+            <Button variant="secondary" size="lg" leadingIcon={<Package size={16} />} onClick={() => navigate('/orders/new')}>
               Create Order
             </Button>
             <Button variant="ghost" size="lg" leadingIcon={<ShoppingBag size={16} />} onClick={() => navigate('/marketplace')}>
@@ -171,6 +199,54 @@ export function SenderDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-6">
+
+            {/* Real orders — actually fetched from the backend, not dummy data */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[18px] font-bold text-ink">Your Orders</h2>
+                <span className="text-[12px] text-ink-muted">{myOrders.length} total</span>
+              </div>
+              {ordersLoading ? (
+                <div className="rounded-[16px] border border-border bg-white p-8 flex items-center justify-center">
+                  <Loader2 size={20} className="text-ink-muted animate-spin" />
+                </div>
+              ) : myOrders.length === 0 ? (
+                <div className="rounded-[16px] border border-dashed border-border bg-white p-8 text-center">
+                  <PackageOpen size={28} className="text-ink-muted mx-auto mb-2" />
+                  <p className="text-[14px] text-ink-secondary">No orders yet.</p>
+                  <p className="text-[12px] text-ink-muted mt-1">Create your first delivery request to see it here.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {myOrders.map(order => {
+                    const statusInfo = getStatusInfo(order.status)
+                    return (
+                      <div key={order._id} className="rounded-[16px] border border-border bg-white p-5">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">
+                              {order.orderType === 'parcel' ? 'Parcel' : 'Shopping Request'} · {order.bookingMethod === 'public' ? 'Public' : 'Direct'}
+                            </p>
+                            <p className="text-[15px] font-bold text-ink">
+                              {order.pickup?.city} → {order.destination?.city}
+                            </p>
+                            <p className="text-[13px] text-ink-muted mt-0.5">
+                              {order.orderType === 'parcel'
+                                ? order.items?.[0]?.name
+                                : order.shoppingDetails?.productLink}
+                            </p>
+                          </div>
+                          <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold shrink-0 ${statusInfo.cls}`}>
+                            {statusInfo.label}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-ink">Active Deliveries</h2>
@@ -216,7 +292,7 @@ export function SenderDashboard() {
               </div>
               {[
                 { icon: <Search size={15} className="text-primary" />, label: 'Search traveler trips', action: () => navigate('/trip-search') },
-                { icon: <Package size={15} className="text-primary" />, label: 'New delivery request', action: () => navigate('/order-new') },
+                { icon: <Package size={15} className="text-primary" />, label: 'New delivery request', action: () => navigate('/orders/new') },
                 { icon: <ShoppingBag size={15} className="text-coral" />, label: 'Browse Marketplace', action: () => navigate('/marketplace') },
               ].map(item => (
                 <button key={item.label} onClick={item.action} className="flex w-full items-center gap-3 px-5 py-3 text-[13px] text-ink-secondary hover:bg-divider hover:text-ink transition-colors">
