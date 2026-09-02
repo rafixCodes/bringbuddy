@@ -14,11 +14,16 @@ import { SenderDashboard } from "./components/dashboard/SenderDashboard";
 import { TravelerDashboard } from "./components/dashboard/TravelerDashboard";
 import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
+import { RaiseDispute } from "./components/disputes/RaiseDispute";
+import { MyDisputes } from "./components/disputes/MyDisputes";
+import { DisputeDetails } from "./components/disputes/DisputeDetails";
+import { AdminDisputes } from "./components/disputes/AdminDisputes";
 
 import {
   ProtectedRoute,
   OnboardingRoute,
   PublicOnlyRoute,
+  AdminRoute,
 } from "./context/RouteGuards";
 // AdminRoute is exported from ./context/RouteGuards and ready to use — import it
 // here once /admin is wired (AdminCenter.jsx conversion, next in the plan).
@@ -49,6 +54,30 @@ function App() {
       <Route path="/traveler-dashboard" element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
       <Route path="/orders/new" element={<ProtectedRoute><OrderCreation /></ProtectedRoute>} />
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+
+      {/* Dispute Resolution */}
+      <Route
+        path="/disputes/new/:orderId"
+        element={<ProtectedRoute><RaiseDispute /></ProtectedRoute>}
+      />
+      <Route
+        path="/disputes/my"
+        element={<ProtectedRoute><MyDisputes /></ProtectedRoute>}
+      />
+      <Route
+        path="/disputes/:id"
+        element={<ProtectedRoute><DisputeDetails /></ProtectedRoute>}
+      />
+
+      {/* Admin Dispute Management */}
+      <Route
+        path="/admin/disputes"
+        element={
+          <AdminRoute>
+            <AdminDisputes />
+          </AdminRoute>
+        }
+      />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />

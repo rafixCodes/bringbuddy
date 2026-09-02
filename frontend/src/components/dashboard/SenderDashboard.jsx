@@ -240,6 +240,16 @@ export function SenderDashboard() {
                             {statusInfo.label}
                           </span>
                         </div>
+
+                        <div className="mt-4 flex justify-end">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => navigate(`/disputes/new/${order._id}`)}
+                          >
+                            Raise Dispute
+                          </Button>
+                        </div>
                       </div>
                     )
                   })}
