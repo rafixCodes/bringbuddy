@@ -8,8 +8,8 @@ import { Button } from '../ui'
 import { AuthNavbar } from '../AuthNavbar'
 import { FormField } from '../auth/FormField'
 import { useToast } from '../../lib/toast'
-import { checkRestrictedItem } from '../../data/prototype'
 import { createOrder } from '../../services/orderService'
+import { checkRestrictedItems } from '../../services/restrictedItemService'
 
 // NOTE on mapping vs. the Figma source: the prototype used 'carry-only' /
 // 'shopping-request' as its type keys. The real Order.js schema (already on
@@ -97,31 +97,16 @@ function OrderTypeStep({ onNext, current }) {
 }
 
 /* ---- Step 2a: Carry Only details ---- */
-const RESTRICTED_SAMPLE = 'alcohol'
-
 function CarryOnlyForm({ draft, onUpdate, onNext }) {
-  const [itemError, setItemError] = useState('')
-  const [itemOk, setItemOk] = useState(false)
   const [errors, setErrors] = useState({})
 
   function handleItemChange(val) {
     onUpdate('itemDescription', val)
-    setItemError('')
-    setItemOk(false)
-    if (val.length > 3) {
-      // Client-side advisory only — the real backend also runs its own
-      // server-side restricted-keyword check on submit (orderController.js),
-      // so this can't be bypassed just by skipping this warning.
-      const err = checkRestrictedItem(val)
-      if (err) setItemError(err)
-      else if (val.length > 5) setItemOk(true)
-    }
   }
 
   function validate() {
     const e = {}
     if (!draft.itemDescription) e.item = 'Please describe the item.'
-    if (itemError) e.item = itemError
     if (!draft.weightKg || +draft.weightKg <= 0) e.weight = 'Enter a valid weight.'
     if (!draft.pickupCity) e.pickupCity = 'Pickup city is required.'
     if (!draft.pickupCountry) e.pickupCountry = 'Pickup country is required.'
@@ -147,27 +132,10 @@ function CarryOnlyForm({ draft, onUpdate, onNext }) {
             placeholder="e.g. Traditional clothing and small gifts"
             value={String(draft.itemDescription ?? '')}
             onChange={e => handleItemChange(e.target.value)}
-            error={errors.item || itemError}
-            success={itemOk && !itemError ? '✓ Item appears eligible' : undefined}
+            error={errors.item}
           />
-          {itemError && (
-            <div className="mt-2 rounded-[10px] bg-danger-light border border-danger/20 px-3.5 py-3 flex items-start gap-2.5">
-              <AlertTriangle size={15} className="text-danger shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[13px] font-semibold text-danger">{itemError}</p>
-                <p className="text-[12px] text-ink-secondary mt-0.5">This item can't be carried through BringBuddy.</p>
-                <button
-                  type="button"
-                  onClick={() => { onUpdate('itemDescription', ''); setItemError(''); setItemOk(false) }}
-                  className="mt-1.5 text-[12px] text-primary font-medium hover:underline"
-                >
-                  Change item
-                </button>
-              </div>
-            </div>
-          )}
           <p className="text-[11px] text-ink-muted mt-1.5">
-            Not sure? Try: "{RESTRICTED_SAMPLE}" to see a restricted item warning.
+            The item will be checked against BringBuddy's current restricted-item policy.
           </p>
         </div>
 
@@ -272,6 +240,7 @@ function CarryOnlyForm({ draft, onUpdate, onNext }) {
           <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
           <p className="text-[12px] text-ink-secondary">
             <strong className="text-ink">Some items cannot be carried through BringBuddy.</strong>
+            {' '}<a href="/restricted-items" className="font-semibold text-primary hover:underline">View policy</a>
           </p>
         </div>
 
@@ -280,7 +249,6 @@ function CarryOnlyForm({ draft, onUpdate, onNext }) {
           size="lg"
           className="w-full mt-1"
           trailingIcon={<ArrowRight size={16} />}
-          disabled={!!itemError}
           onClick={() => validate() && onNext()}
         >
           Continue
@@ -611,6 +579,32 @@ export function OrderCreation() {
           budget: +formData.budget,
           specialInstructions: formData.instructions,
         }
+      }
+
+      const descriptions = orderType === 'carry-only'
+        ? [formData.itemDescription, formData.specialInstructions]
+        : [formData.productUrl, formData.instructions]
+      const validation = await checkRestrictedItems(descriptions)
+
+      if (!validation.allowed) {
+        const blockedNames = validation.blockedItems.map(item => item.name).join(', ')
+        toast({
+          tone: 'error',
+          title: 'Order blocked',
+          message: `${blockedNames} cannot be sent through BringBuddy.`,
+        })
+        return
+      }
+
+      if (validation.requiresAcknowledgement) {
+        const warningText = validation.warnings
+          .map(item => `${item.name}: ${item.reason}`)
+          .join('\n\n')
+        const acknowledged = window.confirm(
+          `Restricted item warning\n\n${warningText}\n\nContinue only if you can meet the required airline and customs rules.`
+        )
+        if (!acknowledged) return
+        payload.restrictedItemAcknowledged = true
       }
 
       await createOrder(payload)

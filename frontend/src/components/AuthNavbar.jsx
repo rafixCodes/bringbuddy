@@ -203,11 +203,13 @@ export function AuthNavbar() {
             { label: 'My Trips', path: '/my-trips' },
             { label: 'Marketplace', path: '/marketplace' },
             { label: 'Earnings', path: '/earnings' },
+            { label: 'Restricted Items', path: '/restricted-items' },
           ] : [
             { label: 'Dashboard', path: '/sender-dashboard' },
             { label: 'Find a Trip', path: '/trip-search' },
             { label: 'Marketplace', path: '/marketplace' },
             { label: 'My Orders', path: '/order-history' },
+            { label: 'Restricted Items', path: '/restricted-items' },
           ]).map(item => (
             <button
               key={item.label}

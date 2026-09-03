@@ -1,23 +1,5 @@
 const Order = require('../models/Order');
-
-// TEMPORARY — hardcoded keyword list, standing in for real Feature 17
-// (Restricted Items) until that branch's RestrictedItem model is
-// reconciled and merged onto the current schema. Replace this array with
-// a real DB query against the RestrictedItem collection once that lands.
-// See INDEX.md for the deferred-work decision this stands in for.
-const RESTRICTED_KEYWORDS = [
-  'weapon', 'gun', 'firearm', 'ammunition', 'explosive', 'bomb',
-  'drug', 'narcotic', 'cocaine', 'cannabis',
-  'cash', 'currency',
-  'alcohol', 'liquor', 'wine',
-  'lithium', 'battery', 'flammable',
-];
-
-function findRestrictedKeyword(text) {
-  if (!text) return null;
-  const lower = text.toLowerCase();
-  return RESTRICTED_KEYWORDS.find((word) => lower.includes(word)) || null;
-}
+const { validateDescriptions } = require('../utils/restrictedItemValidator');
 
 // Create Order — branches on orderType (parcel vs. shopping) for the
 // body shape it expects, matching Order.js's schema. trip is intentionally
@@ -35,6 +17,7 @@ const createOrder = async (req, res) => {
       destination,
       receiver,
       isPublic,
+      restrictedItemAcknowledged,
     } = req.body;
 
     if (!orderType || !['parcel', 'shopping'].includes(orderType)) {
@@ -80,15 +63,6 @@ const createOrder = async (req, res) => {
           message: 'At least one item is required for a parcel order',
         });
       }
-      for (const item of items) {
-        const hit = findRestrictedKeyword(item.name) || findRestrictedKeyword(item.description);
-        if (hit) {
-          return res.status(400).json({
-            success: false,
-            message: `Item appears to match a restricted category ("${hit}"). Please review BringBuddy's restricted items policy.`,
-          });
-        }
-      }
     }
 
     if (orderType === 'shopping') {
@@ -98,6 +72,29 @@ const createOrder = async (req, res) => {
           message: 'Product link and quantity are required for a shopping order',
         });
       }
+    }
+
+    const descriptions = orderType === 'parcel'
+      ? items.flatMap((item) => [item.name, item.description])
+      : [shoppingDetails.productLink, shoppingDetails.specialInstructions];
+    const restrictedValidation = await validateDescriptions(descriptions);
+
+    if (!restrictedValidation.allowed) {
+      return res.status(400).json({
+        success: false,
+        code: 'PROHIBITED_ITEM',
+        message: `Order blocked: ${restrictedValidation.blockedItems.map((item) => item.name).join(', ')}`,
+        validation: restrictedValidation,
+      });
+    }
+
+    if (restrictedValidation.requiresAcknowledgement && restrictedItemAcknowledged !== true) {
+      return res.status(409).json({
+        success: false,
+        code: 'RESTRICTED_ITEM_WARNING',
+        message: 'This order contains a restricted category. Review the warning before continuing.',
+        validation: restrictedValidation,
+      });
     }
 
     const order = await Order.create({
@@ -111,7 +108,12 @@ const createOrder = async (req, res) => {
       destination,
       receiver,
       isPublic: !!isPublic,
-      timeline: [{ status: 'created', note: 'Order created' }],
+      timeline: [{
+        status: 'created',
+        note: restrictedValidation.requiresAcknowledgement
+          ? 'Order created after restricted-item warning was acknowledged'
+          : 'Order created',
+      }],
     });
 
     return res.status(201).json({

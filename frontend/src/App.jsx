@@ -14,6 +14,7 @@ import { SenderDashboard } from "./components/dashboard/SenderDashboard";
 import { TravelerDashboard } from "./components/dashboard/TravelerDashboard";
 import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
+import { RestrictedItems } from "./components/restricted/RestrictedItems";
 
 import {
   ProtectedRoute,
@@ -49,6 +50,8 @@ function App() {
       <Route path="/traveler-dashboard" element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
       <Route path="/orders/new" element={<ProtectedRoute><OrderCreation /></ProtectedRoute>} />
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+      <Route path="/admin" element={<Navigate to="/restricted-items" replace />} />
+      <Route path="/restricted-items" element={<ProtectedRoute><RestrictedItems /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />
