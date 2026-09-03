@@ -5,10 +5,15 @@ import { AuthNavbar } from '../AuthNavbar'
 import { getMyOrders } from '../../services/orderService'
 import { getStatusInfo, groupOrdersByStatus } from '../../data/orderStatus'
 
-function OrderCard({ order }) {
+function OrderCard({ order, onOpen }) {
   const statusInfo = getStatusInfo(order.status)
   return (
-    <div className="rounded-[16px] border border-border bg-white p-5">
+    <button
+      type="button"
+      onClick={onOpen}
+      className="w-full rounded-[16px] border border-border bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-e1)]"
+      aria-label={`Track order from ${order.pickup?.city} to ${order.destination?.city}`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold text-ink-muted uppercase tracking-widest mb-0.5">
@@ -32,7 +37,10 @@ function OrderCard({ order }) {
           {statusInfo.label}
         </span>
       </div>
-    </div>
+      <p className="mt-4 border-t border-border pt-3 text-[12px] font-semibold text-primary">
+        View tracking timeline →
+      </p>
+    </button>
   )
 }
 
@@ -110,7 +118,13 @@ export function OrderHistory() {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {currentList.map(order => <OrderCard key={order._id} order={order} />)}
+            {currentList.map(order => (
+              <OrderCard
+                key={order._id}
+                order={order}
+                onOpen={() => navigate(`/orders/${order._id}/tracking`)}
+              />
+            ))}
           </div>
         )}
       </main>
