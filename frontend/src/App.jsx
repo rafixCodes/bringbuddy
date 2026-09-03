@@ -14,11 +14,14 @@ import { SenderDashboard } from "./components/dashboard/SenderDashboard";
 import { TravelerDashboard } from "./components/dashboard/TravelerDashboard";
 import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
+import { TravelerVerification } from "./components/verification/TravelerVerification";
+import { AdminVerifications } from "./components/verification/AdminVerifications";
 
 import {
   ProtectedRoute,
   OnboardingRoute,
   PublicOnlyRoute,
+  AdminRoute,
 } from "./context/RouteGuards";
 // AdminRoute is exported from ./context/RouteGuards and ready to use — import it
 // here once /admin is wired (AdminCenter.jsx conversion, next in the plan).
@@ -43,12 +46,15 @@ function App() {
       <Route path="/onboarding" element={<OnboardingRoute><ModeSelection /></OnboardingRoute>} />
       <Route path="/sender-onboarding" element={<OnboardingRoute><SenderOnboarding /></OnboardingRoute>} />
       <Route path="/traveler-onboarding" element={<OnboardingRoute><TravelerOnboarding /></OnboardingRoute>} />
+      <Route path="/verification-intro" element={<TravelerVerification />} />
 
       {/* Authenticated */}
       <Route path="/sender-dashboard" element={<ProtectedRoute><SenderDashboard /></ProtectedRoute>} />
       <Route path="/traveler-dashboard" element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
       <Route path="/orders/new" element={<ProtectedRoute><OrderCreation /></ProtectedRoute>} />
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+      <Route path="/admin" element={<Navigate to="/admin/verifications" replace />} />
+      <Route path="/admin/verifications" element={<AdminRoute><AdminVerifications /></AdminRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />

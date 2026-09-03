@@ -59,6 +59,8 @@ function CapacityBar({ used, total }) {
 export function TravelerDashboard() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const verificationStatus = user?.travelerInfo?.verificationStatus || 'not_submitted'
+  const isVerified = user?.travelerInfo?.isVerified === true
   const activeOrder = DUMMY_ACTIVE_ORDER // placeholder until Order Management exists
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
@@ -194,10 +196,23 @@ export function TravelerDashboard() {
             <div className="rounded-[16px] border border-border bg-white overflow-hidden">
               <div className="px-5 py-3.5 border-b border-border flex items-center justify-between">
                 <p className="text-[13px] font-bold text-ink">Your Reputation</p>
-                <div className="flex items-center gap-1 text-[12px] font-semibold text-success">
-                  <CheckCircle2 size={12} /> Verified
+                <div className={`flex items-center gap-1 text-[12px] font-semibold ${isVerified ? 'text-success' : verificationStatus === 'pending' ? 'text-warning' : 'text-danger'}`}>
+                  {isVerified ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
+                  {isVerified ? 'Verified' : verificationStatus === 'pending' ? 'Pending' : 'Not verified'}
                 </div>
               </div>
+              {!isVerified && (
+                <div className="px-5 py-4 border-b border-border bg-warning-light/60">
+                  <p className="text-[12px] text-ink-secondary mb-3">
+                    {verificationStatus === 'pending'
+                      ? 'Your identity is waiting for admin review.'
+                      : 'Complete identity verification to publish trips and accept orders.'}
+                  </p>
+                  <Button variant="secondary" size="md" className="w-full" onClick={() => navigate('/verification-intro')}>
+                    {verificationStatus === 'pending' ? 'View verification status' : 'Start verification'}
+                  </Button>
+                </div>
+              )}
               <div className="divide-y divide-border">
                 {[
                   { label: 'Rating', value: '4.9 ★' },
