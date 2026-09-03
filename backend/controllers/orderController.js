@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const Trip = require('../models/Trip');
 
 // TEMPORARY — hardcoded keyword list, standing in for real Feature 17
 // (Restricted Items) until that branch's RestrictedItem model is
@@ -20,9 +21,12 @@ function findRestrictedKeyword(text) {
 }
 
 // Create Order — branches on orderType (parcel vs. shopping) for the
-// body shape it expects, matching Order.js's schema. trip is intentionally
-// NOT required here — booking/matching to a specific trip happens later,
-// in Feature 8 (Booking/Applications), not at order-creation time.
+// body shape it expects, matching Order.js's schema. trip is OPTIONAL —
+// only present when the sender arrived here via a "Request This Traveler"
+// action from Search (Feature 6) with a specific trip already picked.
+// A sender starting cold (no trip picked) creates a public-marketplace
+// order instead, with trip left null — matching happens later via
+// Applications (Feature 8), not by attaching a trip at creation time.
 const createOrder = async (req, res) => {
   try {
     const {
@@ -35,6 +39,7 @@ const createOrder = async (req, res) => {
       destination,
       receiver,
       isPublic,
+      tripId,
     } = req.body;
 
     if (!orderType || !['parcel', 'shopping'].includes(orderType)) {
@@ -100,6 +105,26 @@ const createOrder = async (req, res) => {
       }
     }
 
+    // If a specific trip was picked (Direct Request path), validate it's
+    // real and actually accepting requests before attaching it — a stale
+    // or cancelled trip shouldn't silently get attached to a new order.
+    let trip = null;
+    if (tripId) {
+      trip = await Trip.findById(tripId);
+      if (!trip) {
+        return res.status(404).json({
+          success: false,
+          message: 'The selected trip could not be found',
+        });
+      }
+      if (trip.status !== 'published') {
+        return res.status(400).json({
+          success: false,
+          message: 'This trip is no longer accepting requests',
+        });
+      }
+    }
+
     const order = await Order.create({
       sender: req.user.id,
       orderType,
@@ -111,6 +136,7 @@ const createOrder = async (req, res) => {
       destination,
       receiver,
       isPublic: !!isPublic,
+      trip: trip ? trip._id : null,
       timeline: [{ status: 'created', note: 'Order created' }],
     });
 

@@ -1,22 +1,20 @@
 import {
   Plane, Package, Plus, ChevronRight, ArrowRight, CheckCircle2,
-  Wallet, AlertCircle, TrendingUp, Shield,
+  Wallet, AlertCircle, TrendingUp, Shield, Loader2, PackageOpen,
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui'
 import { AuthNavbar } from '../AuthNavbar'
 import { useAuth } from '../../context/AuthContext'
+import { getMyTrips } from '../../services/tripService'
+import { getTripStatusInfo } from '../../data/tripStatus'
 
-// DUMMY DATA — Trip Management (Feature 3) and Order Management (Features
-// 4/5/9) aren't built on the backend yet. Same pattern as SenderDashboard.jsx:
-// clearly isolated here, not mixed into data/prototype.js (that file's
-// TRAVELERS/TRIPS are keyed by travelerId for the *sender's* search view,
-// not shaped for "this traveler's own trips"). Replace with real API calls
-// once Feature 3/9 exist.
-const UPCOMING_TRIPS = [
-  { route: 'Dhaka → London', date: '28 Aug 2026', capacity: 6, used: 2.5, status: 'Active' },
-  { route: 'London → Dhaka', date: '14 Oct 2026', capacity: 10, used: 0, status: 'Open' },
-]
+// DUMMY DATA — Order Management (Features 4/5 backend now exists, but the
+// matching/traveler-assignment part — Features 8/9 — doesn't yet), so a
+// traveler's *active delivery* still can't be real. Trip data below this
+// is now real (Feature 3 backend just wired in) — see UPCOMING_TRIPS'
+// removal and the real fetch in the component below.
 
 const DUMMY_ACTIVE_ORDER = {
   id: 'BB-1048',
@@ -64,6 +62,28 @@ export function TravelerDashboard() {
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
 
   const monthEarnings = 4200
+
+  // Real trips, fetched from the actual backend (Feature 3, just wired in).
+  const [trips, setTrips] = useState([])
+  const [tripsLoading, setTripsLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchTrips() {
+      try {
+        const data = await getMyTrips()
+        if (!cancelled) setTrips(data.trips || [])
+      } catch (error) {
+        console.error(error)
+      } finally {
+        if (!cancelled) setTripsLoading(false)
+      }
+    }
+    fetchTrips()
+    return () => { cancelled = true }
+  }, [])
+
+  const upcomingTrips = trips.filter(t => t.status !== 'cancelled' && t.status !== 'completed')
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,28 +154,46 @@ export function TravelerDashboard() {
                   Manage trips <ChevronRight size={13} />
                 </button>
               </div>
-              <div className="flex flex-col gap-4">
-                {UPCOMING_TRIPS.map(trip => (
-                  <div key={trip.date} className="rounded-[16px] border border-border bg-white p-5">
-                    <div className="flex items-start justify-between gap-3 mb-4">
-                      <div>
-                        <p className="text-[16px] font-bold text-ink mb-0.5">{trip.route}</p>
-                        <p className="text-[13px] text-ink-muted">{trip.date}</p>
+              {tripsLoading ? (
+                <div className="rounded-[16px] border border-border bg-white p-8 flex items-center justify-center">
+                  <Loader2 size={20} className="text-ink-muted animate-spin" />
+                </div>
+              ) : upcomingTrips.length === 0 ? (
+                <div className="rounded-[16px] border border-dashed border-border bg-white p-8 text-center">
+                  <PackageOpen size={28} className="text-ink-muted mx-auto mb-2" />
+                  <p className="text-[14px] text-ink-secondary">No trips posted yet.</p>
+                  <p className="text-[12px] text-ink-muted mt-1">Post a trip to start receiving delivery requests.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {upcomingTrips.map(trip => {
+                    const usedKg = trip.luggageCapacityKg - trip.remainingCapacityKg
+                    const statusInfo = getTripStatusInfo(trip.status)
+                    return (
+                      <div key={trip._id} className="rounded-[16px] border border-border bg-white p-5">
+                        <div className="flex items-start justify-between gap-3 mb-4">
+                          <div>
+                            <p className="text-[16px] font-bold text-ink mb-0.5">{trip.departureCity} → {trip.destinationCity}</p>
+                            <p className="text-[13px] text-ink-muted">
+                              {new Date(trip.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </p>
+                          </div>
+                          <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusInfo.cls}`}>
+                            {statusInfo.label}
+                          </span>
+                        </div>
+                        <CapacityBar used={usedKg} total={trip.luggageCapacityKg} />
+                        {usedKg > 0 && (
+                          <div className="mt-3 flex items-center gap-2 text-[12px] text-ink-secondary">
+                            <AlertCircle size={12} className="text-warning" />
+                            {trip.remainingCapacityKg} kg remaining
+                          </div>
+                        )}
                       </div>
-                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${trip.status === 'Active' ? 'bg-primary-light text-primary' : 'bg-success-light text-success'}`}>
-                        {trip.status}
-                      </span>
-                    </div>
-                    <CapacityBar used={trip.used} total={trip.capacity} />
-                    {trip.used > 0 && (
-                      <div className="mt-3 flex items-center gap-2 text-[12px] text-ink-secondary">
-                        <AlertCircle size={12} className="text-warning" />
-                        {trip.capacity - trip.used} kg remaining · 1 active order
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Active orders */}

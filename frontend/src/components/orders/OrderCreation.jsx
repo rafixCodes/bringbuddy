@@ -3,7 +3,7 @@ import {
   Package, ShoppingBag, CheckCircle2, ChevronLeft,
   AlertTriangle, ArrowRight, User, Globe, Loader2,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '../ui'
 import { AuthNavbar } from '../AuthNavbar'
 import { FormField } from '../auth/FormField'
@@ -438,75 +438,86 @@ function ShoppingRequestForm({ draft, onUpdate, onNext }) {
   )
 }
 
-/* ---- Step 3: Booking method ---- */
-// NOTE: the Figma source showed a specific pre-selected traveler/trip card
-// here (via getTravelerById/getTripById), assuming Trip Search (Feature 6)
-// had already run and the sender arrived here with a traveler picked.
-// That feature doesn't exist yet, so there's no real traveler to preview —
-// this step is simplified to just the direct-vs-public choice itself.
-// Wire the traveler preview back in once Feature 6/7 exist.
-function BookingMethodStep({ onSelect, isSubmitting }) {
-  const [selected, setSelected] = useState(null)
-
+/* ---- Step 3a: Post to Marketplace (walk-up flow, no trip pre-picked) ---- */
+// The old version of this step offered a blind "Direct Request" choice
+// with no traveler ever actually selected — it created an order
+// indistinguishable from "Public" (trip: null either way), which was
+// misleading. Direct Request now only happens via a specific trip picked
+// on Search (Feature 6) — see TripConfirmStep below. A sender who starts
+// Order Creation cold, without having searched first, only has this path.
+function PostToMarketplaceStep({ onConfirm, isSubmitting }) {
   return (
     <div>
-      <h2 className="text-[24px] font-bold text-ink mb-1.5">How do you want to find a traveler?</h2>
-      <p className="text-[14px] text-ink-secondary mb-6">Choose between a direct request or a public marketplace post.</p>
+      <h2 className="text-[24px] font-bold text-ink mb-1.5">Post to the marketplace</h2>
+      <p className="text-[14px] text-ink-secondary mb-6">
+        Your request will be visible to eligible verified travelers, who can apply to carry it.
+      </p>
 
-      <div className="flex flex-col gap-4 mb-6">
-        <button
-          type="button"
-          onClick={() => setSelected('direct')}
-          aria-pressed={selected === 'direct'}
-          className={`text-left rounded-[16px] border-2 p-5 transition-all duration-200 ${selected === 'direct' ? 'border-primary shadow-[var(--shadow-e2)]' : 'border-border hover:border-primary/30'}`}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-[10px] bg-primary-light flex items-center justify-center shrink-0">
-                <User size={18} className="text-primary" />
-              </div>
-              <div>
-                <p className="text-[15px] font-bold text-ink">Direct Request</p>
-                <p className="text-[13px] text-ink-secondary">
-                  Send this request directly to a specific traveler. (Traveler search isn't built yet —
-                  this creates the order now; you can attach a traveler once Trip Search exists.)
-                </p>
-              </div>
-            </div>
-            {selected === 'direct' && <CheckCircle2 size={18} className="text-primary shrink-0" />}
+      <div className="rounded-[16px] border-2 border-primary/40 bg-primary-light/40 p-5 mb-6">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-coral-light flex items-center justify-center shrink-0">
+            <Globe size={18} className="text-coral" />
           </div>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setSelected('public')}
-          aria-pressed={selected === 'public'}
-          className={`text-left rounded-[16px] border-2 p-5 transition-all duration-200 ${selected === 'public' ? 'border-primary shadow-[var(--shadow-e2)]' : 'border-border hover:border-primary/30'}`}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-[10px] bg-coral-light flex items-center justify-center shrink-0">
-                <Globe size={18} className="text-coral" />
-              </div>
-              <div>
-                <p className="text-[15px] font-bold text-ink">Public Marketplace</p>
-                <p className="text-[13px] text-ink-secondary">Post your request publicly so eligible travelers can apply.</p>
-              </div>
-            </div>
-            {selected === 'public' && <CheckCircle2 size={18} className="text-primary shrink-0" />}
+          <div>
+            <p className="text-[15px] font-bold text-ink">Public Marketplace</p>
+            <p className="text-[13px] text-ink-secondary mt-0.5">
+              Looking for a specific traveler instead? Use{' '}
+              <span className="font-semibold text-primary">Find a Trip</span> to search first, then
+              request that traveler directly from their trip.
+            </p>
           </div>
-        </button>
+        </div>
       </div>
 
       <Button
         variant="primary"
         size="lg"
         className="w-full"
-        disabled={!selected || isSubmitting}
+        disabled={isSubmitting}
         trailingIcon={isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <ArrowRight size={16} />}
-        onClick={() => selected && onSelect(selected)}
+        onClick={onConfirm}
       >
-        {isSubmitting ? 'Creating order…' : 'Create Order'}
+        {isSubmitting ? 'Posting…' : 'Post to Marketplace'}
+      </Button>
+    </div>
+  )
+}
+
+/* ---- Step 3b: Confirm a specific trip (arrived here via Search's
+   "Request This Traveler" action, with a trip already picked) ---- */
+function TripConfirmStep({ trip, onConfirm, isSubmitting }) {
+  return (
+    <div>
+      <h2 className="text-[24px] font-bold text-ink mb-1.5">Confirm your request</h2>
+      <p className="text-[14px] text-ink-secondary mb-6">
+        This request will be sent directly to the traveler below.
+      </p>
+
+      <div className="rounded-[16px] border-2 border-primary shadow-[var(--shadow-e2)] p-5 mb-6">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-primary-light flex items-center justify-center shrink-0">
+            <User size={18} className="text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[15px] font-bold text-ink">{trip.travelerName || 'Traveler'}</p>
+            <p className="text-[13px] text-ink-secondary mt-0.5">
+              {trip.departureCity} → {trip.destinationCity}
+              {trip.travelDate ? ` · ${new Date(trip.travelDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}
+            </p>
+          </div>
+          <CheckCircle2 size={18} className="text-primary shrink-0 ml-auto" />
+        </div>
+      </div>
+
+      <Button
+        variant="primary"
+        size="lg"
+        className="w-full"
+        disabled={isSubmitting}
+        trailingIcon={isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <ArrowRight size={16} />}
+        onClick={onConfirm}
+      >
+        {isSubmitting ? 'Sending request…' : 'Send Request'}
       </Button>
     </div>
   )
@@ -546,7 +557,13 @@ function StepIndicator({ step }) {
 /* ---- Main OrderCreation ---- */
 export function OrderCreation() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { toast } = useToast()
+  // Set by Search's (Feature 6) "Request This Traveler" action:
+  // navigate('/orders/new', { state: { trip: { _id, travelerName, ... } } })
+  // Presence of this means we skip the marketplace-post choice entirely
+  // and go straight to a direct request against this specific trip.
+  const preselectedTrip = location.state?.trip ?? null
   const [orderType, setOrderType] = useState(null)
   const [step, setStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -581,13 +598,13 @@ export function OrderCreation() {
     setStep(2)
   }
 
-  async function handleBookingSelect(method) {
+  async function handleSubmitOrder() {
     setIsSubmitting(true)
     try {
       const payload = {
         orderType: orderType === 'carry-only' ? 'parcel' : 'shopping',
-        bookingMethod: method === 'public' ? 'public' : 'direct',
-        isPublic: method === 'public',
+        bookingMethod: preselectedTrip ? 'direct' : 'public',
+        isPublic: !preselectedTrip,
         pickup: { city: formData.pickupCity, country: formData.pickupCountry },
         destination: { city: formData.destinationCity, country: formData.destinationCountry },
         receiver: {
@@ -595,6 +612,10 @@ export function OrderCreation() {
           phone: formData.receiverPhone,
           address: formData.receiverAddress,
         },
+      }
+
+      if (preselectedTrip) {
+        payload.tripId = preselectedTrip._id
       }
 
       if (orderType === 'carry-only') {
@@ -614,7 +635,11 @@ export function OrderCreation() {
       }
 
       await createOrder(payload)
-      toast({ tone: 'success', title: 'Order created!', message: 'Your request has been posted.' })
+      toast({
+        tone: 'success',
+        title: preselectedTrip ? 'Request sent!' : 'Order created!',
+        message: preselectedTrip ? 'Your request has been sent to the traveler.' : 'Your request has been posted.',
+      })
       // /orders/:id (Order Hub) doesn't exist yet (Feature 9) — send back
       // to the dashboard for now, same pattern as other not-yet-built
       // destinations elsewhere in the app.
@@ -648,8 +673,11 @@ export function OrderCreation() {
           {step === 1 && orderType === 'shopping-request' && (
             <ShoppingRequestForm draft={formData} onUpdate={update} onNext={handleDetailsNext} />
           )}
-          {step === 2 && (
-            <BookingMethodStep onSelect={handleBookingSelect} isSubmitting={isSubmitting} />
+          {step === 2 && preselectedTrip && (
+            <TripConfirmStep trip={preselectedTrip} onConfirm={handleSubmitOrder} isSubmitting={isSubmitting} />
+          )}
+          {step === 2 && !preselectedTrip && (
+            <PostToMarketplaceStep onConfirm={handleSubmitOrder} isSubmitting={isSubmitting} />
           )}
         </div>
       </main>

@@ -14,6 +14,8 @@ import { SenderDashboard } from "./components/dashboard/SenderDashboard";
 import { TravelerDashboard } from "./components/dashboard/TravelerDashboard";
 import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
+import { PostTrip } from "./components/trips/PostTrip";
+import { MyTrips } from "./components/trips/MyTrips";
 
 import {
   ProtectedRoute,
@@ -49,6 +51,8 @@ function App() {
       <Route path="/traveler-dashboard" element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
       <Route path="/orders/new" element={<ProtectedRoute><OrderCreation /></ProtectedRoute>} />
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+      <Route path="/trips/new" element={<ProtectedRoute><PostTrip /></ProtectedRoute>} />
+      <Route path="/trips/my" element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />
