@@ -1,57 +1,49 @@
 const mongoose = require('mongoose');
 
-const applicationSchema = new mongoose.Schema(
+const directBookingRequestSchema = new mongoose.Schema(
   {
     order: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Order',
       required: true,
     },
-
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     traveler: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-
     trip: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Trip',
       required: true,
     },
-
     proposedFee: {
       type: Number,
       required: true,
       min: 0,
     },
-
     message: {
       type: String,
-      trim: true,
-      maxlength: 500,
       default: '',
     },
-
     status: {
       type: String,
       enum: ['pending', 'accepted', 'rejected'],
       default: 'pending',
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// A traveler must not apply to the same order more than once.
-// This also protects against two simultaneous duplicate API requests.
-applicationSchema.index(
-  { order: 1, traveler: 1 },
-  { unique: true }
+directBookingRequestSchema.index({ order: 1, status: 1 });
+directBookingRequestSchema.index({ traveler: 1, status: 1 });
+
+module.exports = mongoose.model(
+  'DirectBookingRequest',
+  directBookingRequestSchema
 );
-
-applicationSchema.index({ traveler: 1, status: 1 });
-applicationSchema.index({ order: 1, status: 1 });
-
-module.exports = mongoose.model('Application', applicationSchema);
