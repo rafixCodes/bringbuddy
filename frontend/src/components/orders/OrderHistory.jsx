@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Loader2, PackageOpen, ChevronLeft } from 'lucide-react'
+import { Loader2, PackageOpen, ChevronLeft, KeyRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { AuthNavbar } from '../AuthNavbar'
 import { getMyOrders } from '../../services/orderService'
 import { getStatusInfo, groupOrdersByStatus } from '../../data/orderStatus'
 
-function OrderCard({ order }) {
+function OrderCard({ order, onDeliveryOtp }) {
   const statusInfo = getStatusInfo(order.status)
   return (
     <div className="rounded-[16px] border border-border bg-white p-5">
@@ -32,6 +32,13 @@ function OrderCard({ order }) {
           {statusInfo.label}
         </span>
       </div>
+      <button
+        type="button"
+        onClick={onDeliveryOtp}
+        className="mt-4 flex items-center gap-1.5 border-t border-border pt-3 text-[12px] font-semibold text-primary hover:text-primary-dark"
+      >
+        <KeyRound size={14} /> Delivery confirmation
+      </button>
     </div>
   )
 }
@@ -110,7 +117,13 @@ export function OrderHistory() {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {currentList.map(order => <OrderCard key={order._id} order={order} />)}
+            {currentList.map(order => (
+              <OrderCard
+                key={order._id}
+                order={order}
+                onDeliveryOtp={() => navigate(`/orders/${order._id}/delivery-otp`)}
+              />
+            ))}
           </div>
         )}
       </main>

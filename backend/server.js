@@ -6,6 +6,7 @@ const travelerRoutes = require('./routes/travelerRoutes');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const tripRoutes = require('./routes/tripRoutes');
+const otpRoutes = require('./routes/otpRoutes');
 
 dotenv.config();
 connectDB();
@@ -28,6 +29,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 
 app.use('/api/trips', tripRoutes);
+
+app.use('/api/delivery-otp', otpRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

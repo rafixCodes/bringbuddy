@@ -48,9 +48,11 @@ const orderSchema = new mongoose.Schema({
   }],
 
   otp: {
-    code: { type: String },
+    code: { type: String, select: false },
     isVerified: { type: Boolean, default: false },
-    verifiedAt: { type: Date }
+    verifiedAt: { type: Date },
+    expiresAt: { type: Date },
+    failedAttempts: { type: Number, default: 0 }
   },
 
   isPublic: { type: Boolean, default: false }

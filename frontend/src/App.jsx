@@ -16,6 +16,8 @@ import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
 import { PostTrip } from "./components/trips/PostTrip";
 import { MyTrips } from "./components/trips/MyTrips";
+import { DeliveryOtpManager } from "./components/orders/DeliveryOtpManager";
+import { ReceiverDeliveryConfirmation } from "./components/orders/ReceiverDeliveryConfirmation";
 
 import {
   ProtectedRoute,
@@ -35,6 +37,7 @@ function App() {
       <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
       <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
       <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPassword /></PublicOnlyRoute>} />
+      <Route path="/delivery-confirmation/:id" element={<ReceiverDeliveryConfirmation />} />
 
       {/* Onboarding: needs auth, blocks users who already finished it.
           hasCompletedOnboarding only becomes true at the END of
@@ -53,6 +56,7 @@ function App() {
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
       <Route path="/trips/new" element={<ProtectedRoute><PostTrip /></ProtectedRoute>} />
       <Route path="/trips/my" element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />
+      <Route path="/orders/:id/delivery-otp" element={<ProtectedRoute><DeliveryOtpManager /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />
