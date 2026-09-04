@@ -16,6 +16,7 @@ import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
 import { PostTrip } from "./components/trips/PostTrip";
 import { MyTrips } from "./components/trips/MyTrips";
+import { ReviewPage } from "./components/reviews/ReviewPage";
 
 import {
   ProtectedRoute,
@@ -53,6 +54,7 @@ function App() {
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
       <Route path="/trips/new" element={<ProtectedRoute><PostTrip /></ProtectedRoute>} />
       <Route path="/trips/my" element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />
+      <Route path="/orders/:orderId/review" element={<ProtectedRoute><ReviewPage /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />

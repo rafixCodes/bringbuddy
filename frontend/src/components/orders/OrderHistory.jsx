@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Loader2, PackageOpen, ChevronLeft } from 'lucide-react'
+import { Loader2, PackageOpen, ChevronLeft, Star } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { AuthNavbar } from '../AuthNavbar'
 import { getMyOrders } from '../../services/orderService'
 import { getStatusInfo, groupOrdersByStatus } from '../../data/orderStatus'
 
-function OrderCard({ order }) {
+function OrderCard({ order, onReview }) {
   const statusInfo = getStatusInfo(order.status)
   return (
     <div className="rounded-[16px] border border-border bg-white p-5">
@@ -32,6 +32,14 @@ function OrderCard({ order }) {
           {statusInfo.label}
         </span>
       </div>
+      {order.status === 'completed' && order.traveler && (
+        <button
+          onClick={() => onReview(order._id)}
+          className="mt-4 flex items-center gap-1.5 border-t border-border pt-3 text-[13px] font-semibold text-primary hover:text-primary-dark"
+        >
+          <Star size={15} /> Leave or view review
+        </button>
+      )}
     </div>
   )
 }
@@ -110,7 +118,7 @@ export function OrderHistory() {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {currentList.map(order => <OrderCard key={order._id} order={order} />)}
+            {currentList.map(order => <OrderCard key={order._id} order={order} onReview={id => navigate(`/orders/${id}/review`)} />)}
           </div>
         )}
       </main>
