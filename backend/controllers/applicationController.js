@@ -3,6 +3,7 @@ const Order = require('../models/Order');
 const Trip = require('../models/Trip');
 const OrderHub = require('../models/OrderHub');
 const User = require('../models/User');
+const DirectBookingRequest = require('../models/DirectBookingRequest');
 
 const normalizeText = (value) => {
   return String(value || '').trim().toLowerCase();
@@ -379,6 +380,20 @@ const acceptApplication = async (req, res) => {
       {
         order: order._id,
         _id: { $ne: application._id },
+        status: 'pending',
+      },
+      {
+        $set: {
+          status: 'rejected',
+        },
+      }
+    );
+
+    // A marketplace application won the order, so any direct requests
+    // for the same order must also close.
+    await DirectBookingRequest.updateMany(
+      {
+        order: order._id,
         status: 'pending',
       },
       {

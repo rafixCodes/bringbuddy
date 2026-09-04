@@ -14,6 +14,8 @@ import { SenderDashboard } from "./components/dashboard/SenderDashboard";
 import { TravelerDashboard } from "./components/dashboard/TravelerDashboard";
 import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
+import { BookingCenter } from "./components/booking/BookingCenter";
+import { DirectBooking } from "./components/booking/DirectBooking";
 
 import {
   ProtectedRoute,
@@ -49,6 +51,8 @@ function App() {
       <Route path="/traveler-dashboard" element={<ProtectedRoute><TravelerDashboard /></ProtectedRoute>} />
       <Route path="/orders/new" element={<ProtectedRoute><OrderCreation /></ProtectedRoute>} />
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+      <Route path="/booking-center" element={<ProtectedRoute><BookingCenter /></ProtectedRoute>} />
+      <Route path="/booking/direct/:orderId" element={<ProtectedRoute><DirectBooking /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />

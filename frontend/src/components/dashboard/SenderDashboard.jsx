@@ -177,6 +177,9 @@ export function SenderDashboard() {
             <Button variant="ghost" size="lg" leadingIcon={<ShoppingBag size={16} />} onClick={() => navigate('/marketplace')}>
               Marketplace
             </Button>
+            <Button variant="ghost" size="lg" leadingIcon={<Clock size={16} />} onClick={() => navigate('/booking-center')}>
+              Booking Center
+            </Button>
           </div>
         </div>
 

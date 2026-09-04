@@ -438,82 +438,57 @@ function ShoppingRequestForm({ draft, onUpdate, onNext }) {
   )
 }
 
-/* ---- Step 3: Booking method ---- */
-// NOTE: the Figma source showed a specific pre-selected traveler/trip card
-// here (via getTravelerById/getTripById), assuming Trip Search (Feature 6)
-// had already run and the sender arrived here with a traveler picked.
-// That feature doesn't exist yet, so there's no real traveler to preview —
-// this step is simplified to just the direct-vs-public choice itself.
-// Wire the traveler preview back in once Feature 6/7 exist.
+/* ---- Step 3: Publish ---- */
 function BookingMethodStep({ onSelect, isSubmitting }) {
-  const [selected, setSelected] = useState(null)
-
   return (
     <div>
-      <h2 className="text-[24px] font-bold text-ink mb-1.5">How do you want to find a traveler?</h2>
-      <p className="text-[14px] text-ink-secondary mb-6">Choose between a direct request or a public marketplace post.</p>
+      <h2 className="text-[24px] font-bold text-ink mb-1.5">Post your delivery</h2>
+      <p className="text-[14px] text-ink-secondary mb-6">
+        Your delivery will be listed in the marketplace so matching travelers can apply.
+      </p>
 
-      <div className="flex flex-col gap-4 mb-6">
-        <button
-          type="button"
-          onClick={() => setSelected('direct')}
-          aria-pressed={selected === 'direct'}
-          className={`text-left rounded-[16px] border-2 p-5 transition-all duration-200 ${selected === 'direct' ? 'border-primary shadow-[var(--shadow-e2)]' : 'border-border hover:border-primary/30'}`}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-[10px] bg-primary-light flex items-center justify-center shrink-0">
-                <User size={18} className="text-primary" />
-              </div>
-              <div>
-                <p className="text-[15px] font-bold text-ink">Direct Request</p>
-                <p className="text-[13px] text-ink-secondary">
-                  Send this request directly to a specific traveler. (Traveler search isn't built yet —
-                  this creates the order now; you can attach a traveler once Trip Search exists.)
-                </p>
-              </div>
-            </div>
-            {selected === 'direct' && <CheckCircle2 size={18} className="text-primary shrink-0" />}
+      <div className="rounded-[16px] border-2 border-primary/20 bg-primary-light p-5 mb-4">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-white flex items-center justify-center shrink-0">
+            <Globe size={18} className="text-primary" />
           </div>
-        </button>
+          <div>
+            <p className="text-[15px] font-bold text-ink">Marketplace listing</p>
+            <p className="text-[13px] text-ink-secondary mt-1">
+              Travelers can find this delivery and send you applications with their trip and proposed fee.
+            </p>
+          </div>
+        </div>
+      </div>
 
-        <button
-          type="button"
-          onClick={() => setSelected('public')}
-          aria-pressed={selected === 'public'}
-          className={`text-left rounded-[16px] border-2 p-5 transition-all duration-200 ${selected === 'public' ? 'border-primary shadow-[var(--shadow-e2)]' : 'border-border hover:border-primary/30'}`}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-[10px] bg-coral-light flex items-center justify-center shrink-0">
-                <Globe size={18} className="text-coral" />
-              </div>
-              <div>
-                <p className="text-[15px] font-bold text-ink">Public Marketplace</p>
-                <p className="text-[13px] text-ink-secondary">Post your request publicly so eligible travelers can apply.</p>
-              </div>
-            </div>
-            {selected === 'public' && <CheckCircle2 size={18} className="text-primary shrink-0" />}
-          </div>
-        </button>
+      <div className="rounded-[12px] border border-border bg-white px-4 py-3 mb-6">
+        <p className="text-[12px] text-ink-secondary">
+          <strong className="text-ink">You are not limited to waiting.</strong>{' '}
+          After posting, open Booking Center and use <strong className="text-ink">Find Traveler</strong>{' '}
+          to approach a matching verified traveler for this same order.
+        </p>
       </div>
 
       <Button
         variant="primary"
         size="lg"
         className="w-full"
-        disabled={!selected || isSubmitting}
-        trailingIcon={isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <ArrowRight size={16} />}
-        onClick={() => selected && onSelect(selected)}
+        disabled={isSubmitting}
+        trailingIcon={
+          isSubmitting
+            ? <Loader2 size={16} className="animate-spin" />
+            : <ArrowRight size={16} />
+        }
+        onClick={onSelect}
       >
-        {isSubmitting ? 'Creating order…' : 'Create Order'}
+        {isSubmitting ? 'Posting delivery…' : 'Post Delivery'}
       </Button>
     </div>
   )
 }
 
 /* ---- Progress indicator ---- */
-const STEPS_LABELS = ['Order Type', 'Details', 'Booking Method']
+const STEPS_LABELS = ['Order Type', 'Details', 'Publish']
 
 function StepIndicator({ step }) {
   return (
@@ -581,13 +556,13 @@ export function OrderCreation() {
     setStep(2)
   }
 
-  async function handleBookingSelect(method) {
+  async function handleBookingSelect() {
     setIsSubmitting(true)
     try {
       const payload = {
         orderType: orderType === 'carry-only' ? 'parcel' : 'shopping',
-        bookingMethod: method === 'public' ? 'public' : 'direct',
-        isPublic: method === 'public',
+        bookingMethod: 'public',
+        isPublic: true,
         pickup: { city: formData.pickupCity, country: formData.pickupCountry },
         destination: { city: formData.destinationCity, country: formData.destinationCountry },
         receiver: {
@@ -614,14 +589,24 @@ export function OrderCreation() {
       }
 
       await createOrder(payload)
-      toast({ tone: 'success', title: 'Order created!', message: 'Your request has been posted.' })
-      // /orders/:id (Order Hub) doesn't exist yet (Feature 9) — send back
-      // to the dashboard for now, same pattern as other not-yet-built
-      // destinations elsewhere in the app.
-      navigate('/sender-dashboard')
+
+      toast({
+        tone: 'success',
+        title: 'Delivery posted!',
+        message: 'Travelers can apply in the marketplace, or you can find a traveler yourself.',
+      })
+
+      navigate('/booking-center')
     } catch (error) {
-      const message = error.response?.data?.message || 'Could not create the order. Please try again.'
-      toast({ tone: 'error', title: 'Something went wrong', message })
+      const message =
+        error.response?.data?.message ||
+        'Could not create the order. Please try again.'
+
+      toast({
+        tone: 'error',
+        title: 'Something went wrong',
+        message,
+      })
     } finally {
       setIsSubmitting(false)
     }

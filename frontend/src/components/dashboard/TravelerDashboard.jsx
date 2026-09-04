@@ -1,6 +1,6 @@
 import {
   Plane, Package, Plus, ChevronRight, ArrowRight, CheckCircle2,
-  Wallet, AlertCircle, TrendingUp, Shield,
+  Wallet, AlertCircle, TrendingUp, Shield, Clock,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui'
@@ -100,6 +100,14 @@ export function TravelerDashboard() {
               onClick={() => navigate('/marketplace')}
             >
               Browse Requests
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              leadingIcon={<Clock size={16} />}
+              onClick={() => navigate('/booking-center')}
+            >
+              Booking Requests
             </Button>
           </div>
         </div>
