@@ -15,6 +15,10 @@ const {
   deductTripCapacity,
   createHttpError,
 } = require('../utils/bookingHelpers');
+const {
+  createNotification,
+  createNotifications,
+} = require('../utils/notificationHelper');
 
 function validateFee(value) {
   const fee = Number(value);
@@ -333,6 +337,15 @@ const sendDirectBookingRequest = async (req, res) => {
 
     await order.save();
 
+    await createNotification({
+      user: traveler._id,
+      type: 'booking',
+      title: 'New direct booking request',
+      message: `${req.user.name} sent you a request for an order from ${order.pickup.city} to ${order.destination.city}.`,
+      relatedOrder: order._id,
+      actionUrl: '/booking-center',
+    });
+
     const populatedRequest =
       await DirectBookingRequest.findById(directRequest._id)
         .populate(
@@ -592,6 +605,34 @@ const acceptDirectBookingRequest = async (req, res) => {
       deductTripCapacity(trip, order);
       await trip.save({ session });
 
+      const [otherDirectRequests, pendingApplications] =
+        await Promise.all([
+          DirectBookingRequest.find({
+            order: order._id,
+            _id: { $ne: directRequest._id },
+            status: 'pending',
+          })
+            .select('traveler')
+            .session(session),
+          Application.find({
+            order: order._id,
+            status: 'pending',
+          })
+            .select('traveler')
+            .session(session),
+        ]);
+
+      const rejectedTravelerIds = [
+        ...new Set(
+          [...otherDirectRequests, ...pendingApplications].map(
+            (item) => item.traveler.toString()
+          )
+        ),
+      ].filter(
+        (travelerId) =>
+          travelerId !== traveler._id.toString()
+      );
+
       directRequest.status = 'accepted';
       await directRequest.save({ session });
 
@@ -646,6 +687,42 @@ const acceptDirectBookingRequest = async (req, res) => {
           setDefaultsOnInsert: true,
           session,
         }
+      );
+
+      await createNotification(
+        {
+          user: order.sender,
+          type: 'booking',
+          title: 'Direct request accepted',
+          message: `${traveler.name} accepted your ${order.pickup.city} to ${order.destination.city} booking request.`,
+          relatedOrder: order._id,
+          actionUrl: '/booking-center',
+        },
+        session
+      );
+
+      await createNotification(
+        {
+          user: traveler._id,
+          type: 'booking',
+          title: 'Booking confirmed',
+          message: `You are now assigned to the ${order.pickup.city} to ${order.destination.city} order.`,
+          relatedOrder: order._id,
+          actionUrl: '/booking-center',
+        },
+        session
+      );
+
+      await createNotifications(
+        rejectedTravelerIds.map((travelerId) => ({
+          user: travelerId,
+          type: 'booking',
+          title: 'Order assigned to another traveler',
+          message: `The ${order.pickup.city} to ${order.destination.city} order is no longer available.`,
+          relatedOrder: order._id,
+          actionUrl: '/booking-center',
+        })),
+        session
       );
 
       acceptedRequest = directRequest;
@@ -718,6 +795,19 @@ const rejectDirectBookingRequest = async (req, res) => {
 
     directRequest.status = 'rejected';
     await directRequest.save();
+
+    const order = await Order.findById(directRequest.order);
+
+    if (order) {
+      await createNotification({
+        user: directRequest.sender,
+        type: 'booking',
+        title: 'Direct request declined',
+        message: `${req.user.name} declined your ${order.pickup.city} to ${order.destination.city} booking request.`,
+        relatedOrder: order._id,
+        actionUrl: '/booking-center',
+      });
+    }
 
     return res.status(200).json({
       success: true,

@@ -22,6 +22,7 @@ import { MyTrips } from "./components/trips/MyTrips";
 import { BookingCenter } from "./components/booking/BookingCenter";
 import { DirectBooking } from "./components/booking/DirectBooking";
 import { Marketplace } from "./components/booking/Marketplace";
+import { Notifications } from "./pages/Notifications";
 
 import {
   ProtectedRoute,
@@ -165,6 +166,15 @@ function App() {
         element={
           <ProtectedRoute>
             <DirectBooking />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <Notifications />
           </ProtectedRoute>
         }
       />

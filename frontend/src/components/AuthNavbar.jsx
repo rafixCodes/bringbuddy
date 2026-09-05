@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Logo } from './Logo';
+import { NotificationPanel } from './notifications/NotificationPanel';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../lib/toast';
 import { completeOnboarding } from '../services/authService';
+import { getUnreadNotificationCount } from '../services/notificationService';
 
 import {
   ArrowLeftRight,
@@ -213,59 +215,6 @@ function ProfileDropdown({ onClose, onSwitchMode }) {
   );
 }
 
-function NotificationPanel() {
-  const events = [
-    {
-      time: '2:31 PM',
-      text: 'Sample notification — feature not yet built',
-      icon: '🔔',
-    },
-  ];
-
-  return (
-    <div className="absolute right-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-[14px] border border-border bg-white shadow-[var(--shadow-e3)] animate-[bb-rise_0.2s_cubic-bezier(0.22,1,0.36,1)_both]">
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <p className="text-[13px] font-bold text-ink">
-          Notifications
-        </p>
-
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">
-          Today
-        </span>
-      </div>
-
-      <div className="max-h-[280px] divide-y divide-border overflow-y-auto">
-        {events.map((event) => (
-          <div
-            key={event.text}
-            className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-divider"
-          >
-            <span className="mt-0.5 text-base">
-              {event.icon}
-            </span>
-
-            <div className="min-w-0">
-              <p className="text-[12px] leading-snug text-ink">
-                {event.text}
-              </p>
-
-              <p className="mt-0.5 text-[11px] text-ink-muted">
-                {event.time}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="border-t border-border px-4 py-2.5 text-center">
-        <span className="text-[12px] text-ink-muted">
-          Full activity center coming soon
-        </span>
-      </div>
-    </div>
-  );
-}
-
 export function AuthNavbar() {
   const navigate = useNavigate();
   const { user, refreshUser } = useAuth();
@@ -273,9 +222,11 @@ export function AuthNavbar() {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [scrolled, setScrolled] = useState(false);
 
   const dropRef = useRef(null);
+  const notifRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -294,12 +245,61 @@ export function AuthNavbar() {
   }, []);
 
   useEffect(() => {
+    if (!user?._id) {
+      setUnreadCount(0);
+      return undefined;
+    }
+
+    let active = true;
+
+    async function loadUnreadCount() {
+      try {
+        const data = await getUnreadNotificationCount();
+
+        if (active) {
+          setUnreadCount(data.unreadCount || 0);
+        }
+      } catch (error) {
+        console.error('Unread notification count error:', error);
+      }
+    }
+
+    loadUnreadCount();
+
+    const intervalId = window.setInterval(
+      loadUnreadCount,
+      30000
+    );
+
+    window.addEventListener(
+      'bringbuddy:notifications-changed',
+      loadUnreadCount
+    );
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+      window.removeEventListener(
+        'bringbuddy:notifications-changed',
+        loadUnreadCount
+      );
+    };
+  }, [user?._id]);
+
+  useEffect(() => {
     function handleOutsideClick(event) {
       if (
         dropRef.current &&
         !dropRef.current.contains(event.target)
       ) {
         setDropdownOpen(false);
+      }
+
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target)
+      ) {
+        setNotifOpen(false);
       }
     }
 
@@ -436,32 +436,43 @@ export function AuthNavbar() {
             />
           )}
 
-          <div className="relative">
+          <div ref={notifRef} className="relative">
             <button
               type="button"
-              onClick={() =>
-                setNotifOpen((current) => !current)
-              }
+              onClick={() => {
+                setNotifOpen((current) => !current);
+                setDropdownOpen(false);
+              }}
               aria-label="Notifications"
               className="relative flex h-9 w-9 items-center justify-center rounded-[8px] text-ink-muted transition-colors hover:bg-divider hover:text-ink"
             >
               <Bell size={17} />
 
-              <span
-                className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-white bg-coral"
-                aria-label="Unread notifications"
-              />
+              {unreadCount > 0 && (
+                <span
+                  className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-coral px-1 text-[9px] font-bold text-white"
+                  aria-label={`${unreadCount} unread notifications`}
+                >
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </button>
 
-            {notifOpen && <NotificationPanel />}
+            {notifOpen && (
+              <NotificationPanel
+                onClose={() => setNotifOpen(false)}
+                onUnreadChange={setUnreadCount}
+              />
+            )}
           </div>
 
           <div ref={dropRef} className="relative">
             <button
               type="button"
-              onClick={() =>
-                setDropdownOpen((current) => !current)
-              }
+              onClick={() => {
+                setDropdownOpen((current) => !current);
+                setNotifOpen(false);
+              }}
               aria-expanded={dropdownOpen}
               aria-haspopup="true"
               className="flex items-center gap-2 rounded-[10px] border border-border bg-white px-2.5 py-1.5 transition-all hover:border-primary/30 hover:shadow-[var(--shadow-e1)]"
