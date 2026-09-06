@@ -21,6 +21,8 @@ import { TravelerVerification } from "./components/verification/TravelerVerifica
 import { AdminVerifications } from "./components/verification/AdminVerifications";
 import { AdminCenter } from "./components/admin/AdminCenter";
 import { OrderTracking } from "./components/orders/OrderTracking";
+import { DeliveryOtpManager } from "./components/orders/DeliveryOtpManager";
+import { ReceiverDeliveryConfirmation } from "./components/orders/ReceiverDeliveryConfirmation";
 
 import {
   ProtectedRoute,
@@ -28,8 +30,6 @@ import {
   PublicOnlyRoute,
   AdminRoute,
 } from "./context/RouteGuards";
-// AdminRoute is exported from ./context/RouteGuards and ready to use — import it
-// here once /admin is wired (AdminCenter.jsx conversion, next in the plan).
 
 function App() {
   return (
@@ -41,6 +41,7 @@ function App() {
       <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
       <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
       <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPassword /></PublicOnlyRoute>} />
+      <Route path="/delivery-confirmation/:id" element={<ReceiverDeliveryConfirmation />} />
       <Route path="/onboarding" element={<OnboardingRoute><ModeSelection /></OnboardingRoute>} />
       <Route path="/sender-onboarding" element={<OnboardingRoute><SenderOnboarding /></OnboardingRoute>} />
       <Route path="/traveler-onboarding" element={<OnboardingRoute><TravelerOnboarding /></OnboardingRoute>} />
@@ -58,6 +59,7 @@ function App() {
       <Route path="/admin/verifications" element={<AdminRoute><AdminVerifications /></AdminRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminCenter /></AdminRoute>} />
       <Route path="/orders/:id/tracking" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
+      <Route path="/orders/:id/delivery-otp" element={<ProtectedRoute><DeliveryOtpManager /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />

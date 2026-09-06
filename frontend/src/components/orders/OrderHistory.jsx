@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Loader2, PackageOpen, ChevronLeft } from 'lucide-react'
+import { Loader2, PackageOpen, ChevronLeft, KeyRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { AuthNavbar } from '../AuthNavbar'
 import { getMyOrders } from '../../services/orderService'
 import { getStatusInfo, groupOrdersByStatus } from '../../data/orderStatus'
 
-function OrderCard({ order, onOpen }) {
+function OrderCard({ order, onOpen, onDeliveryOtp }) {
   const statusInfo = getStatusInfo(order.status)
   return (
-    <button
-      type="button"
-      onClick={onOpen}
+    <div
       className="w-full rounded-[16px] border border-border bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-e1)]"
       aria-label={`Track order from ${order.pickup?.city} to ${order.destination?.city}`}
     >
@@ -37,10 +35,23 @@ function OrderCard({ order, onOpen }) {
           {statusInfo.label}
         </span>
       </div>
-      <p className="mt-4 border-t border-border pt-3 text-[12px] font-semibold text-primary">
-        View tracking timeline →
-      </p>
-    </button>
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-3">
+        <button
+          type="button"
+          onClick={onOpen}
+          className="text-[12px] font-semibold text-primary hover:text-primary-dark"
+        >
+          View tracking timeline →
+        </button>
+        <button
+          type="button"
+          onClick={onDeliveryOtp}
+          className="flex items-center gap-1.5 text-[12px] font-semibold text-primary hover:text-primary-dark"
+        >
+          <KeyRound size={14} /> Delivery confirmation
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -123,6 +134,7 @@ export function OrderHistory() {
                 key={order._id}
                 order={order}
                 onOpen={() => navigate(`/orders/${order._id}/tracking`)}
+                onDeliveryOtp={() => navigate(`/orders/${order._id}/delivery-otp`)}
               />
             ))}
           </div>
