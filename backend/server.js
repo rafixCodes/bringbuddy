@@ -10,6 +10,7 @@ const tripRoutes = require('./routes/tripRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const trackingRoutes = require('./routes/trackingRoutes');
 const otpRoutes = require('./routes/otpRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 connectDB();
@@ -37,6 +38,7 @@ app.use('/api/trips', tripRoutes);
 app.use('/api/tracking', trackingRoutes);
 
 app.use('/api/delivery-otp', otpRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

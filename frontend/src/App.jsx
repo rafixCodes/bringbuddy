@@ -23,6 +23,7 @@ import { AdminCenter } from "./components/admin/AdminCenter";
 import { OrderTracking } from "./components/orders/OrderTracking";
 import { DeliveryOtpManager } from "./components/orders/DeliveryOtpManager";
 import { ReceiverDeliveryConfirmation } from "./components/orders/ReceiverDeliveryConfirmation";
+import { ReviewPage } from "./components/reviews/ReviewPage";
 
 import {
   ProtectedRoute,
@@ -60,6 +61,7 @@ function App() {
       <Route path="/admin" element={<AdminRoute><AdminCenter /></AdminRoute>} />
       <Route path="/orders/:id/tracking" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
       <Route path="/orders/:id/delivery-otp" element={<ProtectedRoute><DeliveryOtpManager /></ProtectedRoute>} />
+      <Route path="/orders/:orderId/review" element={<ProtectedRoute><ReviewPage /></ProtectedRoute>} />
 
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />

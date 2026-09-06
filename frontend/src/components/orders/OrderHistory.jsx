@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Loader2, PackageOpen, ChevronLeft, KeyRound } from 'lucide-react'
+import { Loader2, PackageOpen, ChevronLeft, KeyRound, Star } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { AuthNavbar } from '../AuthNavbar'
 import { getMyOrders } from '../../services/orderService'
 import { getStatusInfo, groupOrdersByStatus } from '../../data/orderStatus'
 
-function OrderCard({ order, onOpen, onDeliveryOtp }) {
+function OrderCard({ order, onOpen, onDeliveryOtp, onReview }) {
   const statusInfo = getStatusInfo(order.status)
   return (
     <div
@@ -35,7 +35,7 @@ function OrderCard({ order, onOpen, onDeliveryOtp }) {
           {statusInfo.label}
         </span>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-3">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
         <button
           type="button"
           onClick={onOpen}
@@ -43,13 +43,24 @@ function OrderCard({ order, onOpen, onDeliveryOtp }) {
         >
           View tracking timeline →
         </button>
-        <button
-          type="button"
-          onClick={onDeliveryOtp}
-          className="flex items-center gap-1.5 text-[12px] font-semibold text-primary hover:text-primary-dark"
-        >
-          <KeyRound size={14} /> Delivery confirmation
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={onDeliveryOtp}
+            className="flex items-center gap-1.5 text-[12px] font-semibold text-primary hover:text-primary-dark"
+          >
+            <KeyRound size={14} /> Delivery confirmation
+          </button>
+          {order.status === 'completed' && order.traveler && (
+            <button
+              type="button"
+              onClick={onReview}
+              className="flex items-center gap-1.5 text-[12px] font-semibold text-primary hover:text-primary-dark"
+            >
+              <Star size={14} /> Leave or view review
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -135,6 +146,7 @@ export function OrderHistory() {
                 order={order}
                 onOpen={() => navigate(`/orders/${order._id}/tracking`)}
                 onDeliveryOtp={() => navigate(`/orders/${order._id}/delivery-otp`)}
+                onReview={() => navigate(`/orders/${order._id}/review`)}
               />
             ))}
           </div>
