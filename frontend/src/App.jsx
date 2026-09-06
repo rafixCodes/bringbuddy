@@ -9,13 +9,14 @@ import { ForgotPassword } from "./components/auth/ForgotPassword";
 import { ModeSelection } from "./components/onboarding/ModeSelection";
 import { SenderOnboarding } from "./components/onboarding/SenderOnboarding";
 import { TravelerOnboarding } from "./components/onboarding/TravelerOnboarding";
-
+import { TravelerProfile } from "./components/profile/TravelerProfile";
 import { SenderDashboard } from "./components/dashboard/SenderDashboard";
 import { TravelerDashboard } from "./components/dashboard/TravelerDashboard";
 import { OrderCreation } from "./components/orders/OrderCreation";
 import { OrderHistory } from "./components/orders/OrderHistory";
 import { PostTrip } from "./components/trips/PostTrip";
 import { MyTrips } from "./components/trips/MyTrips";
+import { TripSearch } from "./components/trips/TripSearch";
 
 import {
   ProtectedRoute,
@@ -35,13 +36,6 @@ function App() {
       <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
       <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
       <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPassword /></PublicOnlyRoute>} />
-
-      {/* Onboarding: needs auth, blocks users who already finished it.
-          hasCompletedOnboarding only becomes true at the END of
-          SenderOnboarding/TravelerOnboarding (their "Continue to Dashboard"
-          action) — NOT on ModeSelection or on the "switch mode" buttons on
-          these pages. That's what keeps this guard correct: a user who
-          hasn't finished yet can still reach both step 1 and step 2. */}
       <Route path="/onboarding" element={<OnboardingRoute><ModeSelection /></OnboardingRoute>} />
       <Route path="/sender-onboarding" element={<OnboardingRoute><SenderOnboarding /></OnboardingRoute>} />
       <Route path="/traveler-onboarding" element={<OnboardingRoute><TravelerOnboarding /></OnboardingRoute>} />
@@ -53,7 +47,8 @@ function App() {
       <Route path="/order-history" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
       <Route path="/trips/new" element={<ProtectedRoute><PostTrip /></ProtectedRoute>} />
       <Route path="/trips/my" element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />
-
+      <Route path="/trip-search" element={<ProtectedRoute><TripSearch /></ProtectedRoute>} />
+      <Route path="/profile/:id" element={<ProtectedRoute><TravelerProfile /></ProtectedRoute>} />
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />
 

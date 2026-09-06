@@ -1,14 +1,18 @@
 const User = require('../models/User');
+const Trip = require('../models/Trip');
 
 // @desc Get a traveler's public profile & reputation card
 // @route GET /api/travelers/:id
 const getTravelerProfile = async (req, res) => {
   try {
     const traveler = await User.findById(req.params.id).select('-password');
-
-    if (!traveler || traveler.role !== 'traveler') {
+    if (!traveler || traveler.accountType === 'admin') {
       return res.status(404).json({ message: 'Traveler not found' });
     }
+    const trips = await Trip.find({
+      traveler: traveler._id,
+      status: 'published',
+    }).sort({ travelDate: 1 });
 
     res.json({
       _id: traveler._id,
@@ -23,7 +27,8 @@ const getTravelerProfile = async (req, res) => {
       totalReviews: traveler.travelerInfo.totalReviews,
       responseTime: traveler.travelerInfo.responseTime,
       memberSince: traveler.travelerInfo.memberSince,
-      defaultCarryingFeePerKg: traveler.travelerInfo.defaultCarryingFeePerKg
+      defaultCarryingFeePerKg: traveler.travelerInfo.defaultCarryingFeePerKg,
+      trips
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

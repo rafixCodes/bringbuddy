@@ -15,6 +15,11 @@ export const updateTrip = async (id, updates) => {
   return response.data;
 };
 
+export const searchTrips = async (params) => {
+  const response = await api.get("/trips/search", { params });
+  return response.data;
+};
+
 export const deleteTrip = async (id) => {
   const response = await api.delete(`/trips/${id}`);
   return response.data;

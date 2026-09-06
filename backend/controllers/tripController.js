@@ -158,9 +158,50 @@ const deleteTrip = async (req, res) => {
 };
 
 
+// ===============================
+// Search Published Trips (Feature 6)
+// ===============================
+// Public search across ALL travelers' published trips — distinct from
+// getMyTrips, which only returns the logged-in user's own trips.
+// Only departureCity/destinationCity are matched server-side; rating/fee/
+// capacity/verified-only filtering happens client-side over the result
+// set, same split the Figma prototype used.
+const searchTrips = async (req, res) => {
+  try {
+    const { from, to } = req.query;
+
+    const query = { status: 'published' };
+    if (from) query.departureCity = from;
+    if (to) query.destinationCity = to;
+
+    const trips = await Trip.find(query)
+      .populate('traveler', 'name travelerInfo')
+      .sort({ travelDate: 1 });
+
+    // A trip whose traveler somehow got deleted shouldn't crash the
+    // results list — filter those out rather than let populate return null.
+    const validTrips = trips.filter((t) => t.traveler);
+
+    res.status(200).json({
+      success: true,
+      count: validTrips.length,
+      trips: validTrips
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to search trips',
+      error: error.message
+    });
+  }
+};
+
+
 module.exports = {
   createTrip,
   getMyTrips,
   updateTrip,
-  deleteTrip
+  deleteTrip,
+  searchTrips
 };
