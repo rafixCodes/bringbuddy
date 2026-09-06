@@ -20,6 +20,8 @@ import { TripSearch } from "./components/trips/TripSearch";
 import { TravelerVerification } from "./components/verification/TravelerVerification";
 import { AdminVerifications } from "./components/verification/AdminVerifications";
 import { AdminCenter } from "./components/admin/AdminCenter";
+import { OrderTracking } from "./components/orders/OrderTracking";
+
 import {
   ProtectedRoute,
   OnboardingRoute,
@@ -55,6 +57,8 @@ function App() {
       <Route path="/profile/:id" element={<ProtectedRoute><TravelerProfile /></ProtectedRoute>} />
       <Route path="/admin/verifications" element={<AdminRoute><AdminVerifications /></AdminRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminCenter /></AdminRoute>} />
+      <Route path="/orders/:id/tracking" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
+
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

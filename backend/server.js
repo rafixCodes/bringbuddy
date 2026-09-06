@@ -8,6 +8,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const verificationRoutes = require('./routes/verificationRoutes');
 const tripRoutes = require('./routes/tripRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const trackingRoutes = require('./routes/trackingRoutes');
 
 dotenv.config();
 connectDB();
@@ -32,6 +33,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/verifications', verificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
