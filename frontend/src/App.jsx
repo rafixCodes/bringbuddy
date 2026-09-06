@@ -18,6 +18,7 @@ import { OrderHistory } from "./components/orders/OrderHistory";
 
 import { PostTrip } from "./components/trips/PostTrip";
 import { MyTrips } from "./components/trips/MyTrips";
+import { TripSearch } from "./components/trips/TripSearch";
 
 import { BookingCenter } from "./components/booking/BookingCenter";
 import { DirectBooking } from "./components/booking/DirectBooking";
@@ -139,6 +140,15 @@ function App() {
         element={
           <ProtectedRoute>
             <MyTrips />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/trip-search"
+        element={
+          <ProtectedRoute>
+            <TripSearch />
           </ProtectedRoute>
         }
       />

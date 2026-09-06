@@ -10,6 +10,7 @@ const tripRoutes = require('./routes/tripRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const marketplaceRoutes = require('./routes/marketplaceRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const travelerSearchRoutes = require('./routes/travelerSearchRoutes');
 
 dotenv.config();
 connectDB();
@@ -30,24 +31,14 @@ app.use('/api/travelers', travelerRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/trips', tripRoutes);
-app.use(
-  '/api/applications',
-  applicationRoutes
-);
-app.use(
-  '/api/marketplace',
-  marketplaceRoutes
-);
-app.use(
-  '/api/notifications',
-  notificationRoutes
-);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/traveler-search', travelerSearchRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(
-    `Server running on port ${PORT}`
-  );
+  console.log(`Server running on port ${PORT}`);
 });
