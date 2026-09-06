@@ -1,0 +1,1226 @@
+BATCH 1 — BRINGBUDDY GLOBAL DESIGN SYSTEM + LANDING PAGE
+
+You have already read and analyzed the two attached BringBuddy project documents.
+
+Your understanding of the product, its dual-role account model, business logic, user journeys, and site architecture is correct.
+
+Now begin BATCH 1 ONLY.
+
+============================================================
+IMPORTANT CREATIVE DIRECTION
+============================================================
+
+You have permission to make thoughtful design decisions and improve the visual execution if you believe there is a better solution than the specific examples below.
+
+Use your own professional UI/UX judgment to improve:
+- composition
+- spacing
+- hierarchy
+- visual storytelling
+- component arrangement
+- illustrations
+- iconography
+- animation
+- responsive behavior
+- interaction patterns
+- visual polish
+
+However, there are NON-NEGOTIABLE constraints:
+
+1. Do not change the core BringBuddy product concept.
+2. Do not change the Sender/Traveler dual-role model.
+3. Do not create separate accounts for Sender and Traveler.
+4. Do not change the core user journeys.
+5. Do not remove important product concepts described in the reference documents.
+6. Do not create a generic courier website.
+7. Do not turn BringBuddy into a generic SaaS dashboard.
+8. Do not create disconnected screens.
+9. Do not invent business rules that contradict the reference documents.
+10. Do not sacrifice usability merely for visual aesthetics.
+
+If you have a better design idea than one of my suggested implementations, use the better idea while preserving the underlying intent.
+
+The goal is not to follow every visual instruction mechanically.
+
+The goal is to create the BEST professional interpretation of the BringBuddy product.
+
+============================================================
+BATCH 1 SCOPE
+============================================================
+
+Build ONLY:
+
+01 — Design System
+
+and
+
+02 — Landing / Home Page
+
+Do NOT build the later application screens yet.
+
+Do NOT build:
+- Login
+- Register
+- Dashboard
+- Profile
+- Verification
+- Trip creation
+- Trip detail
+- Trip search results
+- Full marketplace
+- Order creation
+- Order Hub
+- Payment
+- Tracking
+- OTP
+- Reviews
+- Earnings
+- Notifications center
+- Cancellation
+- Disputes
+- Admin
+
+Those will be created in later batches.
+
+The landing page may contain visual previews of these concepts, but do not build their actual application pages yet.
+
+============================================================
+PART 1 — GLOBAL DESIGN LANGUAGE
+============================================================
+
+Create a dedicated Figma page/section:
+
+01 — Design System
+
+This will become the foundation of the entire BringBuddy website.
+
+Everything created in later batches must inherit this visual language.
+
+The design should feel:
+
+TRUSTWORTHY
+MODERN
+GLOBAL
+HUMAN
+WARM
+PREMIUM
+EFFICIENT
+ACCESSIBLE
+
+BringBuddy combines:
+- international travel
+- peer-to-peer delivery
+- marketplace matching
+- logistics
+- payment protection
+- trust and reputation
+
+The visual language should communicate all of those ideas without becoming visually complicated.
+
+Think:
+"modern global marketplace + trustworthy travel platform"
+
+rather than:
+"traditional courier company"
+
+or:
+"generic SaaS dashboard."
+
+============================================================
+PART 2 — COLOR SYSTEM
+============================================================
+
+Create reusable color variables/styles.
+
+PRIMARY BRAND
+
+Deep Indigo:
+#3157D5
+
+Primary Hover:
+#2849B8
+
+Primary Dark:
+#203A96
+
+Primary Light:
+#EEF2FF
+
+TRAVEL / MOVEMENT ACCENT
+
+Coral:
+#F9735B
+
+Use Coral selectively.
+
+It should represent:
+- travel
+- movement
+- energy
+- human connection
+
+Do NOT make the entire website coral.
+
+NEUTRALS
+
+Background:
+#F8FAFC
+
+Surface:
+#FFFFFF
+
+Primary Text:
+#111827
+
+Secondary Text:
+#4B5563
+
+Muted Text:
+#6B7280
+
+Border:
+#E5E7EB
+
+Light Divider:
+#F1F5F9
+
+SEMANTIC COLORS
+
+Success:
+#16A34A
+
+Success Light:
+#DCFCE7
+
+Warning:
+#D97706
+
+Warning Light:
+#FEF3C7
+
+Danger:
+#DC2626
+
+Danger Light:
+#FEE2E2
+
+Information:
+#2563EB
+
+Information Light:
+#DBEAFE
+
+Use semantic colors consistently.
+
+Do not use color only as decoration.
+
+============================================================
+PART 3 — TYPOGRAPHY
+============================================================
+
+Use:
+
+INTER
+
+Create reusable text styles.
+
+Display:
+56px / Bold
+
+H1:
+32px / Bold
+
+H2:
+24px / Bold
+
+H3:
+18px / Semi Bold
+
+Body:
+16px / Regular
+
+Body Medium:
+16px / Medium
+
+Small:
+14px / Regular
+
+Small Medium:
+14px / Medium
+
+Caption:
+12px / Medium
+
+Maintain strong hierarchy.
+
+Do not make every piece of text bold.
+
+If you believe a small typography adjustment would significantly improve the visual hierarchy, you may make it while keeping Inter and the overall scale coherent.
+
+============================================================
+PART 4 — SPACING SYSTEM
+============================================================
+
+Use an 8px-based spacing system.
+
+Core values:
+
+4
+8
+12
+16
+24
+32
+40
+48
+64
+80
+96
+
+Prefer consistent spacing relationships over arbitrary numbers.
+
+Use generous whitespace.
+
+============================================================
+PART 5 — RADIUS SYSTEM
+============================================================
+
+Inputs:
+8px
+
+Buttons:
+8px
+
+Cards:
+12px
+
+Modals:
+16px
+
+Large containers:
+12–16px
+
+Pills / status badges:
+999px
+
+Do not use extremely rounded cards throughout the website.
+
+============================================================
+PART 6 — ELEVATION / SHADOWS
+============================================================
+
+Use subtle elevation.
+
+Create reusable elevation levels.
+
+Level 0:
+No shadow
+
+Level 1:
+Very subtle card shadow
+
+Level 2:
+Soft shadow for floating/elevated cards
+
+Level 3:
+Modal/dropdown shadow
+
+Use borders and spacing as the primary method of separating content.
+
+Do not make every card heavily shadowed.
+
+============================================================
+PART 7 — ICONOGRAPHY
+============================================================
+
+Use one consistent line-icon style, similar in spirit to Lucide.
+
+Do NOT use emojis as actual UI icons.
+
+Use icons for:
+- travel
+- parcel
+- location
+- route
+- search
+- verification
+- security
+- payment
+- tracking
+- notification
+- profile
+- ratings
+- earnings
+- chat
+- settings
+
+Default icon sizes:
+18–24px.
+
+Keep icon weight consistent.
+
+============================================================
+PART 8 — REUSABLE COMPONENT LIBRARY
+============================================================
+
+Create reusable components using Auto Layout and variants.
+
+Do not construct everything from unrelated manually-positioned rectangles.
+
+Create:
+
+BUTTONS
+
+Primary
+Secondary
+Ghost
+Danger
+Disabled
+
+States:
+Default
+Hover
+Pressed
+Disabled
+
+INPUTS
+
+Default
+Focused
+Filled
+Error
+Disabled
+
+BADGES
+
+Verified
+Pending
+Completed
+In Transit
+Cancelled
+Warning
+
+CARDS
+
+Generic Card
+Traveler Card
+Trip Card
+Trust Card
+Feature Card
+Floating Product Card
+
+OTHER COMPONENTS
+
+Avatar
+Avatar with Verification Badge
+Icon Button
+Search Input
+Rating
+Status Indicator
+Divider
+Navbar
+Section Header
+
+Create sensible component properties/variants where supported.
+
+============================================================
+PART 9 — BRANDBUILDING
+============================================================
+
+Create a BringBuddy wordmark:
+
+BringBuddy
+
+Use Deep Indigo as the primary brand color.
+
+Create a minimal symbol inspired by:
+- parcel
+- travel
+- route/movement
+
+The logo should remain recognizable at small sizes.
+
+Keep it simple and professional.
+
+If you can develop a better logo concept that communicates the same idea, use your judgment.
+
+Do not create an overly detailed logo.
+
+============================================================
+PART 10 — LANDING PAGE FRAME
+============================================================
+
+Create:
+
+02 — Landing / Home
+
+Desktop frame:
+1440px wide.
+
+Use a centered content width around:
+1200–1280px.
+
+Use comfortable horizontal margins.
+
+The landing page should feel like a real production startup website.
+
+It should NOT feel like:
+- a wireframe
+- a student project
+- a generic template
+- a Dribbble-only visual
+- a collection of unrelated cards
+
+============================================================
+PART 11 — NAVIGATION
+============================================================
+
+Create a clean desktop navbar.
+
+LEFT:
+
+BringBuddy logo
+
+CENTER / MAIN:
+
+Home
+How It Works
+
+RIGHT:
+
+Log In
+Get Started
+
+Primary CTA:
+Get Started
+
+Use generous whitespace.
+
+Keep the navbar visually lightweight.
+
+The navbar may remain white or use a very subtle background treatment.
+
+Use a subtle sticky/floating behavior if you believe it improves the experience.
+
+Do not make the navbar excessively tall.
+
+============================================================
+PART 12 — HERO
+============================================================
+
+The hero is the most important section.
+
+A visitor should understand the product within approximately five seconds.
+
+Primary headline:
+
+"Carry smarter. Deliver globally."
+
+Supporting message:
+
+"Turn unused luggage space into extra income — or send parcels internationally through trusted travelers."
+
+Primary CTA:
+
+Find a Traveler
+
+Secondary CTA:
+
+Earn While You Travel
+
+Trust line:
+
+"Verified travelers • Secure payments • Track every delivery"
+
+You may refine the exact supporting copy if you believe your version communicates the product more clearly, but preserve the same meaning.
+
+============================================================
+PART 13 — HERO VISUAL STORY
+============================================================
+
+The hero must visually explain the BringBuddy marketplace.
+
+The visual story should communicate:
+
+SENDER
+↓
+PARCEL
+↓
+TRAVELER
+↓
+TRAVEL / FLIGHT
+↓
+DESTINATION
+
+A possible visual direction is:
+
+Dhaka → London
+
+Use a sophisticated route visualization.
+
+Potential elements:
+- origin marker
+- destination marker
+- route line
+- travel/flight indicator
+- parcel
+- luggage
+- traveler
+- destination
+
+You may use an illustration, abstract 3D-like composition, map-inspired visual, or another approach if you believe it communicates the concept better.
+
+Do NOT use a generic delivery truck as the primary visual.
+
+The visual should communicate:
+"someone is already traveling this route and can carry something for someone else."
+
+============================================================
+PART 14 — FLOATING PRODUCT CARDS
+============================================================
+
+Use floating UI cards around the hero visual.
+
+These should look like real BringBuddy product interface elements rather than decorative rectangles.
+
+Potential cards:
+
+CARD A:
+
+✓ Verified Traveler
+
+Rahim Ahmed
+
+Dhaka → London
+
+4.9 ★
+8 kg available
+
+
+CARD B:
+
+Payment Protected
+
+Escrow secured
+
+
+CARD C:
+
+Parcel In Transit
+
+Dhaka → London
+
+Estimated arrival
+02 Sep
+
+
+CARD D:
+
++৳4,500
+
+Traveler earnings
+
+You may modify the exact card layout if you can create a stronger visual composition.
+
+Use:
+- white surface
+- subtle border
+- soft shadow
+- moderate radius
+- compact typography
+- appropriate iconography
+
+Do not overcrowd the hero.
+
+The floating cards should create visual depth.
+
+============================================================
+PART 15 — HERO ANIMATION
+============================================================
+
+IMPORTANT:
+
+The landing page must NOT feel static.
+
+Use polished, purposeful motion.
+
+Motion should communicate:
+
+TRAVEL
+MOVEMENT
+PROGRESS
+TRUST
+ACTIVITY
+
+Implement motion wherever Figma supports it.
+
+HERO ENTRANCE
+
+On page load:
+
+1. Hero headline enters smoothly.
+2. Supporting text follows.
+3. CTAs appear.
+4. Hero visual enters.
+5. Floating cards appear with a subtle stagger.
+
+Use smooth easing.
+
+FLOATING CARDS
+
+Give the floating product cards subtle independent floating movement.
+
+They should gently shift vertically or slightly in position.
+
+Use different timing/delays so they don't move identically.
+
+The movement should be slow, subtle, and premium.
+
+ROUTE ANIMATION
+
+Animate or visually imply movement along the route.
+
+For example:
+
+Dhaka
+   →
+London
+
+A small travel indicator can move along the route.
+
+Do not make the route constantly spin.
+
+BUTTONS
+
+Create:
+- hover state
+- pressed state
+- subtle elevation
+- smooth transition
+
+CARD HOVER
+
+Floating and marketplace cards should have:
+- subtle elevation
+- slight translation
+- shadow transition
+- border/color transition
+
+Use Smart Animate or equivalent prototype behavior where appropriate.
+
+============================================================
+PART 16 — TRUST STRIP
+============================================================
+
+Immediately below the hero, create a compact trust strip.
+
+Four items:
+
+Verified Travelers
+Secure Escrow
+Live Tracking
+OTP Delivery Confirmation
+
+Use appropriate line icons.
+
+The trust strip should visually reassure users that BringBuddy is not simply "handing your parcel to a stranger."
+
+It provides:
+verification
+payment protection
+tracking
+delivery confirmation
+
+============================================================
+PART 17 — HOW BRINGBUDDY WORKS
+============================================================
+
+Create section:
+
+"How BringBuddy works"
+
+Supporting message:
+
+"One marketplace. Two ways to participate."
+
+Create two clearly separated but visually related journeys.
+
+SENDER
+
+01
+Find a Traveler
+
+02
+Create Your Delivery
+
+03
+Book & Pay Securely
+
+04
+Track Your Parcel
+
+05
+Confirm Delivery
+
+
+TRAVELER
+
+01
+Verify Yourself
+
+02
+Post Your Trip
+
+03
+Accept a Delivery
+
+04
+Carry the Parcel
+
+05
+Get Paid
+
+Use a subtle connecting route/path visual.
+
+The user should immediately understand:
+
+Sender:
+needs delivery
+
+Traveler:
+has spare luggage capacity
+
+BringBuddy:
+matches them
+
+Do not make the section overly complex.
+
+Use scroll/reveal animation if supported.
+
+Steps may appear sequentially.
+
+============================================================
+PART 18 — TWO-SIDED VALUE PROPOSITION
+============================================================
+
+Create two strong side-by-side cards.
+
+CARD A — SENDER
+
+Title:
+
+"Send something"
+
+Message:
+
+"Send internationally without traditional courier prices."
+
+Benefits:
+
+Find travelers already flying your route
+Verified profiles
+Secure payment
+Delivery tracking
+
+CTA:
+
+Find a Traveler
+
+
+CARD B — TRAVELER
+
+Title:
+
+"Earn while you travel"
+
+Message:
+
+"Turn unused luggage capacity into extra income."
+
+Benefits:
+
+Publish your trip
+Choose your available capacity
+Accept delivery requests
+Build your reputation
+
+CTA:
+
+Post Your Trip
+
+Use Indigo as the core brand identity.
+
+Use Coral selectively for travel/movement cues.
+
+You may create a stronger visual distinction between these two roles if you believe it improves comprehension, but keep them clearly part of the same BringBuddy product.
+
+============================================================
+PART 19 — MARKETPLACE PREVIEW
+============================================================
+
+Create a visually engaging preview section.
+
+Heading:
+
+"Travelers are already going your way."
+
+Show 3–4 sample traveler cards.
+
+Use fictional/sample data.
+
+Example:
+
+Rahim Ahmed
+✓ Verified Traveler
+
+Dhaka → London
+28 Aug 2026
+
+8 kg available
+৳450/kg
+
+4.9 ★
+27 deliveries
+
+CTA:
+View Trip
+
+Additional sample routes:
+
+Dhaka → Dubai
+Dhaka → Toronto
+Dhaka → New York
+
+Clearly treat these as sample UI data.
+
+Do not imply these are live listings.
+
+Use hover interaction.
+
+Cards should feel like a real marketplace.
+
+============================================================
+PART 20 — FINAL CTA
+============================================================
+
+Create a strong closing section.
+
+Headline:
+
+"Your next trip could carry more than luggage."
+
+Supporting text:
+
+"Send what you need. Earn from the space you have."
+
+Buttons:
+
+Find a Traveler
+
+Post Your Trip
+
+You may improve the visual treatment if you have a stronger concept.
+
+Keep it premium and restrained.
+
+Do not use a giant generic gradient.
+
+============================================================
+PART 21 — FOOTER
+============================================================
+
+Create a clean professional footer.
+
+Brand:
+BringBuddy
+
+Columns:
+
+PRODUCT
+How It Works
+Marketplace
+Trust & Safety
+
+COMPANY
+About
+Contact
+Support
+
+LEGAL
+Privacy
+Terms
+
+Keep it visually lightweight.
+
+============================================================
+PART 22 — MICRO-INTERACTIONS
+============================================================
+
+Use micro-interactions throughout the landing page.
+
+Include where appropriate:
+
+- navbar hover
+- button hover
+- button pressed state
+- card hover
+- icon hover
+- section reveal
+- floating card movement
+- route animation
+- subtle notification-style status feedback
+
+Motion should feel coherent.
+
+Do not animate every object simultaneously.
+
+============================================================
+PART 23 — NOTIFICATION / POPUP LANGUAGE
+============================================================
+
+The landing page should preview BringBuddy's activity and trust system where appropriate.
+
+You may include a tasteful notification-style floating UI element if it improves the hero or product storytelling.
+
+Example:
+
+✓ Payment Secured
+
+Your payment of ৳4,725 is safely held in escrow.
+
+Or:
+
+📦 Parcel picked up
+
+Your delivery from Dhaka → London is now in transit.
+
+Use an actual interface-style notification component, not an arbitrary decorative bubble.
+
+If you implement it as an animation, it can:
+- slide/fade in
+- remain visible briefly
+- subtly disappear
+
+Do not overuse notifications.
+
+============================================================
+PART 24 — PROTOTYPE CONNECTIONS
+============================================================
+
+Connect the main landing-page interactions.
+
+NAVBAR:
+
+Home
+→ Home
+
+How It Works
+→ scroll/anchor to How It Works
+
+Log In
+→ Login placeholder
+
+Get Started
+→ Register placeholder
+
+
+HERO:
+
+Find a Traveler
+→ Search Trips placeholder
+
+Earn While You Travel
+→ Traveler onboarding placeholder
+
+
+MARKETPLACE PREVIEW:
+
+View Trip
+→ Trip Detail placeholder
+
+
+FINAL CTA:
+
+Find a Traveler
+→ Search Trips placeholder
+
+Post Your Trip
+→ Create Trip placeholder
+
+Do not build those future screens in this batch.
+
+Use placeholder frames only when required for prototype connectivity.
+
+Use sensible transitions.
+
+============================================================
+PART 25 — RESPONSIVE FOUNDATION
+============================================================
+
+Prioritize desktop 1440px in this batch.
+
+However, build the design system and landing page using:
+
+Auto Layout
+Constraints
+Components
+Variants
+Responsive-friendly spacing
+
+so it can later adapt to:
+
+Tablet:
+768–1024px
+
+Mobile:
+approximately 390px
+
+Do NOT build the complete mobile site yet.
+
+============================================================
+PART 26 — ACCESSIBILITY
+============================================================
+
+Maintain:
+- strong color contrast
+- readable typography
+- clear labels
+- visible focus states
+- icon + text for important statuses
+- no color-only status communication
+
+Buttons and controls should be comfortably clickable.
+
+============================================================
+PART 27 — QUALITY BAR
+============================================================
+
+The result should feel like a polished startup product that could realistically be shown in:
+
+- a software engineering project presentation
+- an academic project defense
+- a product portfolio
+- a usability study
+- an eventual production implementation
+
+It must look intentional and coherent.
+
+Avoid:
+- random cards everywhere
+- excessive rounded rectangles
+- generic AI-generated layouts
+- excessive gradients
+- excessive shadows
+- visual clutter
+- tiny unreadable text
+- unnecessary decorative elements
+
+Use whitespace intelligently.
+
+============================================================
+PART 28 — CREATIVE FREEDOM
+============================================================
+
+You are allowed to improve any visual implementation in this specification.
+
+For example, if you believe:
+
+- a different hero composition communicates BringBuddy better
+- a different route visualization is more elegant
+- the floating cards should be positioned differently
+- the How It Works section would be clearer with a different layout
+- a different interaction is more intuitive
+- a different section rhythm improves conversion
+- a different illustration style better communicates travel + parcel sharing
+
+then make that improvement.
+
+However:
+
+DO NOT change the underlying product meaning.
+
+DO NOT remove the Sender/Traveler distinction.
+
+DO NOT change the dual-role account concept.
+
+DO NOT change the core marketplace concept.
+
+DO NOT introduce features that contradict the project documents.
+
+Your role is to act as a senior product designer with creative freedom inside the defined product requirements.
+
+============================================================
+PART 29 — FILE ORGANIZATION
+============================================================
+
+Organize the Figma file clearly.
+
+Create:
+
+01 — Design System
+
+02 — Landing / Home
+
+Within Design System organize:
+
+Brand
+Colors
+Typography
+Spacing
+Elevation
+Icons
+Buttons
+Inputs
+Badges
+Cards
+Navigation
+Other Components
+
+Use meaningful layer names.
+
+Use Auto Layout.
+
+Use reusable components.
+
+Keep the file clean enough that another designer/developer could understand it.
+
+============================================================
+FINAL INSTRUCTION
+============================================================
+
+Execute BATCH 1 ONLY.
+
+Do not proceed to Batch 2.
+
+The final Batch 1 result should contain:
+
+1. A professional reusable BringBuddy design system.
+2. A polished 1440px landing page.
+3. A clear explanation of the Sender + Traveler marketplace concept.
+4. A strong hero.
+5. Floating product UI cards.
+6. Travel/route visualization.
+7. Purposeful animation.
+8. Hover and interaction states.
+9. Trust indicators.
+10. How It Works.
+11. Sender vs Traveler value proposition.
+12. Marketplace preview.
+13. Final CTA.
+14. Footer.
+15. Prototype-ready interactions.
+16. Responsive-friendly component foundations.
+
+Most importantly:
+
+MAKE IT FEEL ALIVE.
+
+BringBuddy is about people, travel, movement, parcels, trust, and money moving safely between people.
+
+Use motion and interaction to make that story tangible.
+
+Do not make the animation excessive or distracting.
+
+If you have a substantially better design solution than any specific suggestion above, you are encouraged to use it — provided it preserves the product requirements and improves usability, clarity, and visual quality.
+
+STOP AFTER BATCH 1.

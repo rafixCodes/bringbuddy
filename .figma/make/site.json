@@ -1,0 +1,10 @@
+{
+  "description": "Connects senders with travelers to share unused luggage space for cross-border parcel delivery, enabling secure, verified, and tracked shipments.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
