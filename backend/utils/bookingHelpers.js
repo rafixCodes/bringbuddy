@@ -7,8 +7,6 @@ const ACTIVE_ORDER_STATUSES = [
   'collected',
   'in_transit',
   'arrived',
-  'delivered',
-  'payment_released',
 ];
 
 function normalizeText(value) {
