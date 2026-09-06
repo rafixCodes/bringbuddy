@@ -24,6 +24,7 @@ import { BookingCenter } from "./components/booking/BookingCenter";
 import { DirectBooking } from "./components/booking/DirectBooking";
 import { Marketplace } from "./components/booking/Marketplace";
 import { Notifications } from "./pages/Notifications";
+import { CancellationCenter } from "./components/cancellations/CancellationCenter";
 
 import {
   ProtectedRoute,

@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     trustScore: { type: Number, default: 0 },
     completedDeliveries: { type: Number, default: 0 },
     cancellationRate: { type: Number, default: 0 },
+    cancellationCount: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
     responseTime: { type: Number, default: 0 },

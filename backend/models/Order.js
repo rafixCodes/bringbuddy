@@ -53,6 +53,21 @@ const orderSchema = new mongoose.Schema({
     verifiedAt: { type: Date }
   },
 
+  cancellation: {
+    cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    cancelledByRole: { type: String, enum: ['sender', 'traveler', null], default: null },
+    reason: { type: String, trim: true, maxlength: 500, default: '' },
+    cancelledAt: { type: Date, default: null },
+    capacityRestored: { type: Boolean, default: false },
+    originalTraveler: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    originalTrip: { type: mongoose.Schema.Types.ObjectId, ref: 'Trip', default: null },
+    recoveryStatus: {
+      type: String,
+      enum: ['none', 'awaiting_sender', 'reposted', 'closed'],
+      default: 'none'
+    }
+  },
+
   isPublic: { type: Boolean, default: false }
 }, { timestamps: true });
 

@@ -11,6 +11,7 @@ const applicationRoutes = require('./routes/applicationRoutes');
 const marketplaceRoutes = require('./routes/marketplaceRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const travelerSearchRoutes = require('./routes/travelerSearchRoutes');
+const cancellationRoutes = require('./routes/cancellationRoutes');
 
 dotenv.config();
 connectDB();
@@ -35,6 +36,7 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/traveler-search', travelerSearchRoutes);
+app.use('/api/cancellations', cancellationRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

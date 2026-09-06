@@ -387,10 +387,15 @@ export function AuthNavbar() {
     },
   ];
 
-  const navigationLinks =
-    user?.currentMode === 'traveler'
+  const navigationLinks = [
+    ...(user?.currentMode === 'traveler'
       ? travelerLinks
-      : senderLinks;
+      : senderLinks),
+    {
+      label: 'Cancellations',
+      path: '/cancellations',
+    },
+  ];
 
   return (
     <header
