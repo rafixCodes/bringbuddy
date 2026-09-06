@@ -17,11 +17,14 @@ import { OrderHistory } from "./components/orders/OrderHistory";
 import { PostTrip } from "./components/trips/PostTrip";
 import { MyTrips } from "./components/trips/MyTrips";
 import { TripSearch } from "./components/trips/TripSearch";
-
+import { TravelerVerification } from "./components/verification/TravelerVerification";
+import { AdminVerifications } from "./components/verification/AdminVerifications";
+import { AdminCenter } from "./components/admin/AdminCenter";
 import {
   ProtectedRoute,
   OnboardingRoute,
   PublicOnlyRoute,
+  AdminRoute,
 } from "./context/RouteGuards";
 // AdminRoute is exported from ./context/RouteGuards and ready to use — import it
 // here once /admin is wired (AdminCenter.jsx conversion, next in the plan).
@@ -39,6 +42,7 @@ function App() {
       <Route path="/onboarding" element={<OnboardingRoute><ModeSelection /></OnboardingRoute>} />
       <Route path="/sender-onboarding" element={<OnboardingRoute><SenderOnboarding /></OnboardingRoute>} />
       <Route path="/traveler-onboarding" element={<OnboardingRoute><TravelerOnboarding /></OnboardingRoute>} />
+      <Route path="/verification-intro" element={<TravelerVerification />} />
 
       {/* Authenticated */}
       <Route path="/sender-dashboard" element={<ProtectedRoute><SenderDashboard /></ProtectedRoute>} />
@@ -49,10 +53,10 @@ function App() {
       <Route path="/trips/my" element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />
       <Route path="/trip-search" element={<ProtectedRoute><TripSearch /></ProtectedRoute>} />
       <Route path="/profile/:id" element={<ProtectedRoute><TravelerProfile /></ProtectedRoute>} />
+      <Route path="/admin/verifications" element={<AdminRoute><AdminVerifications /></AdminRoute>} />
+      <Route path="/admin" element={<AdminRoute><AdminCenter /></AdminRoute>} />
       {/* Catch-all so a bad/stale path renders something instead of a blank screen */}
       <Route path="*" element={<Navigate to="/" replace />} />
-
-      {/* /admin intentionally not wired yet — AdminCenter.jsx not converted yet. */}
     </Routes>
   );
 }

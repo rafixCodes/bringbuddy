@@ -6,6 +6,12 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   phone: { type: String, required: true },
 
+  // Phone verification for traveler trust onboarding.
+  // OTP values are hidden from normal database queries.
+  phoneVerified: { type: Boolean, default: false },
+  phoneOtpHash: { type: String, select: false },
+  phoneOtpExpiresAt: { type: Date, select: false },
+
   // Fixed at creation, never toggled. 'admin' accounts are created manually, never via signup.
   accountType: { type: String, enum: ['user', 'admin'], default: 'user' },
 
@@ -20,7 +26,12 @@ const userSchema = new mongoose.Schema({
   travelerInfo: {
     isVerified: { type: Boolean, default: false },
     verificationStatus: { type: String, enum: ['not_submitted', 'pending', 'approved', 'rejected'], default: 'not_submitted' },
+    idDocumentType: { type: String, enum: ['passport', 'nid', ''], default: '' },
     idDocumentUrl: { type: String, default: '' },
+    verificationSubmittedAt: { type: Date },
+    verificationReviewedAt: { type: Date },
+    verificationReviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    rejectionReason: { type: String, default: '' },
     emergencyContact: { name: String, phone: String },
     trustScore: { type: Number, default: 0 },
     completedDeliveries: { type: Number, default: 0 },

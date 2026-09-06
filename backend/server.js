@@ -5,7 +5,9 @@ const connectDB = require('./config/db');
 const travelerRoutes = require('./routes/travelerRoutes');
 const authRoutes = require('./routes/authRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const verificationRoutes = require('./routes/verificationRoutes');
 const tripRoutes = require('./routes/tripRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 dotenv.config();
 connectDB();
@@ -27,6 +29,8 @@ app.use('/api/auth', authRoutes);
 
 app.use('/api/orders', orderRoutes);
 
+app.use('/api/verifications', verificationRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/trips', tripRoutes);
 
 // Server
